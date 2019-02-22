@@ -329,6 +329,13 @@ namespace SqlServerDiff
                     {
                         triggersToTablesTest[tr.Name] = tbl.Name;
                     }
+
+                    if (!NodeTriggers.Nodes.ContainsKey(tr.Name))
+                    {
+                        TreeNode nt = new TreeNode(tr.Name);
+                        nt.Name = tr.Name;
+                        NodeTriggers.Nodes.Add(nt);
+                    }
                 }
             }
 
@@ -346,6 +353,13 @@ namespace SqlServerDiff
                 {
                     ViewTextTest[v.Name] = GetViewText(db, v.Name);
                 }
+
+                if (!NodeViews.Nodes.ContainsKey(v.Name))
+                {
+                    TreeNode nt = new TreeNode(v.Name);
+                    nt.Name = v.Name;
+                    NodeViews.Nodes.Add(nt);
+                }
             }
 
 
@@ -362,6 +376,13 @@ namespace SqlServerDiff
                 {
                     SPTextTest[sp.Name] = GetStoredProcedureText(db, sp.Name);
                 }
+
+                if (!NodeSP.Nodes.ContainsKey(sp.Name))
+                {
+                    TreeNode nt = new TreeNode(sp.Name);
+                    nt.Name = sp.Name;
+                    NodeSP.Nodes.Add(nt);
+                }
             }
 
             foreach (UserDefinedFunction uf in db.UserDefinedFunctions)
@@ -377,13 +398,19 @@ namespace SqlServerDiff
                 {
                     UFTextTest[uf.Name] = GetUFText(db, uf.Name);
                 }
+
+                if (!NodeUF.Nodes.ContainsKey(uf.Name))
+                {
+                    TreeNode nt = new TreeNode(uf.Name);
+                    nt.Name = uf.Name;
+                    NodeUF.Nodes.Add(nt);
+                }
             }
 
             foreach (UserDefinedType ut in db.UserDefinedTypes)
             {
                 if (!ChangedObjectsTest.ContainsKey(ut.Name) || ChangedObjectsTest[ut.Name] != "TT")
                     continue;
-
 
                 if (db == MainDB)
                 {
@@ -392,6 +419,13 @@ namespace SqlServerDiff
                 else
                 {
                     UFTextTest[ut.Name] = GetUFText(db, ut.Name);
+                }
+
+                if (!NodeUT.Nodes.ContainsKey(ut.Name))
+                {
+                    TreeNode nt = new TreeNode(ut.Name);
+                    nt.Name = ut.Name;
+                    NodeUT.Nodes.Add(nt);
                 }
             }
         }
