@@ -245,7 +245,7 @@ namespace SqlServerDiff
 
         public string GetUTTableText(Database db, string name)
         {
-            if (db.Tables[name] == null)
+            if (db.UserDefinedTableTypes[name] == null)
                 return null;
 
             StringBuilder builder = new StringBuilder();
@@ -304,7 +304,7 @@ namespace SqlServerDiff
             }
             else if (MainDB.UserDefinedTableTypes[textBox1.Text.Trim()] != null)
             {
-                ShowDifferences(GetUTText(MainDB, textBox1.Text.Trim()), GetUTText(TestDB, textBox1.Text.Trim()), DiffType.Text);
+                ShowDifferences(GetUTTableText(MainDB, textBox1.Text.Trim()), GetUTTableText(TestDB, textBox1.Text.Trim()), DiffType.Text);
             }
         }
 
@@ -340,6 +340,7 @@ namespace SqlServerDiff
 
         private void AnalyzeDiffBtn_Click(object sender, EventArgs e)
         {
+            treeView1.Nodes.Clear();
             GetObjects(MainDB);
             GetObjects(TestDB);
         }
