@@ -106,6 +106,7 @@
             this.testPasswordBox.PasswordChar = '*';
             this.testPasswordBox.Size = new System.Drawing.Size(128, 20);
             this.testPasswordBox.TabIndex = 3;
+            this.testPasswordBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.testPasswordBox_KeyDown);
             // 
             // label5
             // 

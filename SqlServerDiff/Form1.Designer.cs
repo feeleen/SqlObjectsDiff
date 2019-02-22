@@ -30,12 +30,12 @@
 		{
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Tables");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Triggers");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Stored Procedures");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Functions");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("User Types");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Views");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Tables");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Triggers");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Stored Procedures");
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Functions");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("User Types");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Views");
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -139,25 +139,25 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            treeNode1.Name = "NodeTables";
-            treeNode1.Text = "Tables";
-            treeNode2.Name = "NodeTriggers";
-            treeNode2.Text = "Triggers";
-            treeNode3.Name = "NodeSP";
-            treeNode3.Text = "Stored Procedures";
-            treeNode4.Name = "NodeFn";
-            treeNode4.Text = "Functions";
-            treeNode5.Name = "NodeUserTypes";
-            treeNode5.Text = "User Types";
-            treeNode6.Name = "NodeViews";
-            treeNode6.Text = "Views";
+            treeNode7.Name = "NodeTables";
+            treeNode7.Text = "Tables";
+            treeNode8.Name = "NodeTriggers";
+            treeNode8.Text = "Triggers";
+            treeNode9.Name = "NodeSP";
+            treeNode9.Text = "Stored Procedures";
+            treeNode10.Name = "NodeFn";
+            treeNode10.Text = "Functions";
+            treeNode11.Name = "NodeUserTypes";
+            treeNode11.Text = "User Types";
+            treeNode12.Name = "NodeViews";
+            treeNode12.Text = "Views";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4,
-            treeNode5,
-            treeNode6});
+            treeNode7,
+            treeNode8,
+            treeNode9,
+            treeNode10,
+            treeNode11,
+            treeNode12});
             this.treeView1.Size = new System.Drawing.Size(340, 406);
             this.treeView1.TabIndex = 6;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
@@ -185,17 +185,17 @@
             // AnalyzeDiffBtn
             // 
             this.AnalyzeDiffBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AnalyzeDiffBtn.Location = new System.Drawing.Point(847, 12);
+            this.AnalyzeDiffBtn.Location = new System.Drawing.Point(773, 12);
             this.AnalyzeDiffBtn.Name = "AnalyzeDiffBtn";
-            this.AnalyzeDiffBtn.Size = new System.Drawing.Size(75, 23);
+            this.AnalyzeDiffBtn.Size = new System.Drawing.Size(149, 23);
             this.AnalyzeDiffBtn.TabIndex = 8;
-            this.AnalyzeDiffBtn.Text = "Analyze Diff";
+            this.AnalyzeDiffBtn.Text = "Analyze Changed Objects";
             this.AnalyzeDiffBtn.UseVisualStyleBackColor = true;
             this.AnalyzeDiffBtn.Click += new System.EventHandler(this.AnalyzeDiffBtn_Click);
             // 
             // DaysBox
             // 
-            this.DaysBox.Location = new System.Drawing.Point(788, 14);
+            this.DaysBox.Location = new System.Drawing.Point(714, 14);
             this.DaysBox.Name = "DaysBox";
             this.DaysBox.Size = new System.Drawing.Size(53, 20);
             this.DaysBox.TabIndex = 9;
@@ -209,7 +209,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(751, 16);
+            this.label2.Location = new System.Drawing.Point(677, 16);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(34, 13);
             this.label2.TabIndex = 10;

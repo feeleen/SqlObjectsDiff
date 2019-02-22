@@ -27,5 +27,11 @@ namespace SqlServerDiff
             if (e.KeyData == Keys.Enter)
                 DialogResult = DialogResult.OK;
         }
+
+        private void testPasswordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+                DialogResult = DialogResult.OK;
+        }
     }
 }

@@ -243,6 +243,21 @@ namespace SqlServerDiff
         }
 
 
+        public string GetUTTableText(Database db, string name)
+        {
+            if (db.Tables[name] == null)
+                return null;
+
+            StringBuilder builder = new StringBuilder();
+            foreach (string s in db.UserDefinedTableTypes[name].Script())
+            {
+                builder.AppendLine(s);
+            }
+            string result = builder.ToString();
+
+            return result;
+        }
+
         public string GetTriggerText(Database db, string name)
         {
             string tableName = "";
@@ -287,7 +302,7 @@ namespace SqlServerDiff
             {
                 ShowDifferences(GetUFText(MainDB, textBox1.Text.Trim()), GetUFText(TestDB, textBox1.Text.Trim()), DiffType.Text);
             }
-            else if (MainDB.UserDefinedTypes[textBox1.Text.Trim()] != null)
+            else if (MainDB.UserDefinedTableTypes[textBox1.Text.Trim()] != null)
             {
                 ShowDifferences(GetUTText(MainDB, textBox1.Text.Trim()), GetUTText(TestDB, textBox1.Text.Trim()), DiffType.Text);
             }
@@ -310,6 +325,10 @@ namespace SqlServerDiff
             else if (GetTableText(MainDB, textBox1.Text.Trim()) != null)
             {
                 fctb.Text = GetTableText(MainDB, textBox1.Text.Trim());
+            }
+            else if (GetUTTableText(MainDB, textBox1.Text.Trim()) != null)
+            {
+                fctb.Text = GetUTTableText(MainDB, textBox1.Text.Trim());
             }
 
             //List down all the user-defined function of AdventureWorks
@@ -457,11 +476,11 @@ namespace SqlServerDiff
 
                 if (db == MainDB)
                 {
-                    UFTextMain[utName] = GetUFText(db, utName);
+                    UTTextMain[utName] = GetUTTableText(db, utName);
                 }
                 else
                 {
-                    UFTextTest[utName] = GetUFText(db, utName);
+                    UTTextTest[utName] = GetUTTableText(db, utName);
                 }
 
                 if (!NodeUT.Nodes.ContainsKey(utName))
