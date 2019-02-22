@@ -44,17 +44,20 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.AnalyzeDiffBtn = new System.Windows.Forms.Button();
+            this.DaysBox = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.fctb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DaysBox)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(698, 12);
+            this.button1.Location = new System.Drawing.Point(928, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(99, 23);
             this.button1.TabIndex = 0;
@@ -127,7 +130,7 @@
             this.fctb.RightBracket = ')';
             this.fctb.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.fctb.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctb.ServiceColors")));
-            this.fctb.Size = new System.Drawing.Size(525, 406);
+            this.fctb.Size = new System.Drawing.Size(679, 406);
             this.fctb.TabIndex = 5;
             this.fctb.Zoom = 100;
             // 
@@ -155,8 +158,10 @@
             treeNode4,
             treeNode5,
             treeNode6});
-            this.treeView1.Size = new System.Drawing.Size(264, 406);
+            this.treeView1.Size = new System.Drawing.Size(340, 406);
             this.treeView1.TabIndex = 6;
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            this.treeView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDoubleClick);
             // 
             // splitContainer1
             // 
@@ -173,14 +178,14 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.fctb);
-            this.splitContainer1.Size = new System.Drawing.Size(793, 406);
-            this.splitContainer1.SplitterDistance = 264;
+            this.splitContainer1.Size = new System.Drawing.Size(1023, 406);
+            this.splitContainer1.SplitterDistance = 340;
             this.splitContainer1.TabIndex = 7;
             // 
             // AnalyzeDiffBtn
             // 
             this.AnalyzeDiffBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AnalyzeDiffBtn.Location = new System.Drawing.Point(617, 12);
+            this.AnalyzeDiffBtn.Location = new System.Drawing.Point(847, 12);
             this.AnalyzeDiffBtn.Name = "AnalyzeDiffBtn";
             this.AnalyzeDiffBtn.Size = new System.Drawing.Size(75, 23);
             this.AnalyzeDiffBtn.TabIndex = 8;
@@ -188,11 +193,35 @@
             this.AnalyzeDiffBtn.UseVisualStyleBackColor = true;
             this.AnalyzeDiffBtn.Click += new System.EventHandler(this.AnalyzeDiffBtn_Click);
             // 
+            // DaysBox
+            // 
+            this.DaysBox.Location = new System.Drawing.Point(788, 14);
+            this.DaysBox.Name = "DaysBox";
+            this.DaysBox.Size = new System.Drawing.Size(53, 20);
+            this.DaysBox.TabIndex = 9;
+            this.DaysBox.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(751, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(34, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Days:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1030, 450);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.DaysBox);
             this.Controls.Add(this.AnalyzeDiffBtn);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.button2);
@@ -206,6 +235,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DaysBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,6 +251,8 @@
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button AnalyzeDiffBtn;
+        private System.Windows.Forms.NumericUpDown DaysBox;
+        private System.Windows.Forms.Label label2;
     }
 }
 

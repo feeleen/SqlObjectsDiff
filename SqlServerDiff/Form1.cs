@@ -14,14 +14,16 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Feeleen.Diff;
 using System.Data.SqlClient;
+using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace SqlServerDiff
 {
     public partial class Form1 : Form
     {
 
-        ServerConnection mainConn = new ServerConnection("ds");
-        ServerConnection testConn = new ServerConnection("TEMP-sql1");
+        ServerConnection mainConn = new ServerConnection(ConfigurationManager.AppSettings["MainServer"]);
+        ServerConnection testConn = new ServerConnection(ConfigurationManager.AppSettings["TestServer"]);
 
         Dictionary<string, string> triggersToTablesMain = new Dictionary<string, string>();
         Dictionary<string, string> triggersToTablesTest = new Dictionary<string, string>();
@@ -59,12 +61,26 @@ namespace SqlServerDiff
 
         public Database MainDB
         {
-            get { return MainServer.Databases["drugman"]; }
+            get {
+                string mainDBName = ConfigurationManager.AppSettings["MainDatabase"].Replace(" ", "");
+
+                if (!Regex.IsMatch(mainDBName, @"^[a-zA-Z0-9_]+$"))
+                    throw new Exception("Main database name is not correct!");
+
+                return MainServer.Databases[mainDBName];
+            }
         }
 
         public Database TestDB
         {
-            get { return TestServer.Databases["drugman1"]; }
+            get {
+                string testDBName = ConfigurationManager.AppSettings["TestDatabase"].Replace(" ", "");
+
+                if (!Regex.IsMatch(testDBName, @"^[a-zA-Z0-9_]+$"))
+                    throw new Exception("Test database name is not correct!");
+
+                return TestServer.Databases[testDBName];
+            }
         }
 
         public Server TestServer
@@ -133,7 +149,7 @@ namespace SqlServerDiff
                     type,
                     type_desc
                 from sys.all_objects
-                where modify_date > dateadd(m, -3, getdate())
+                where modify_date > dateadd(d, -{DaysBox.Value}, getdate())
                 order by modify_date desc";
 
             DataSet set = db.ExecuteWithResults(sql);
@@ -263,6 +279,18 @@ namespace SqlServerDiff
             { 
                 ShowDifferences(GetViewText(MainDB, textBox1.Text.Trim()), GetViewText(TestDB, textBox1.Text.Trim()), DiffType.Text);
             }
+            else if (MainDB.Tables[textBox1.Text.Trim()] != null)
+            {
+                ShowDifferences(GetTableText(MainDB, textBox1.Text.Trim()), GetTableText(TestDB, textBox1.Text.Trim()), DiffType.Text);
+            }
+            else if (MainDB.UserDefinedFunctions[textBox1.Text.Trim()] != null)
+            {
+                ShowDifferences(GetUFText(MainDB, textBox1.Text.Trim()), GetUFText(TestDB, textBox1.Text.Trim()), DiffType.Text);
+            }
+            else if (MainDB.UserDefinedTypes[textBox1.Text.Trim()] != null)
+            {
+                ShowDifferences(GetUTText(MainDB, textBox1.Text.Trim()), GetUTText(TestDB, textBox1.Text.Trim()), DiffType.Text);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -279,11 +307,15 @@ namespace SqlServerDiff
             {
                 fctb.Text = GetViewText(MainDB, textBox1.Text.Trim());
             }
+            else if (GetTableText(MainDB, textBox1.Text.Trim()) != null)
+            {
+                fctb.Text = GetTableText(MainDB, textBox1.Text.Trim());
+            }
 
             //List down all the user-defined function of AdventureWorks
             //foreach (UserDefinedFunction myUserDefinedFunction in MainDB.UserDefinedFunctions)
             //{
-             //   Console.WriteLine(myUserDefinedFunction.Name);
+            //   Console.WriteLine(myUserDefinedFunction.Name);
             //}
         }
 
@@ -295,139 +327,226 @@ namespace SqlServerDiff
 
         private void GetObjects(Database db)
         {
-            foreach (Table tbl in db.Tables)
+            foreach (string tblName in ChangedObjectsTest.Where(s => s.Value.Trim() == "U").Select(s => s.Key).ToList())
             {
-                if (!ChangedObjectsTest.ContainsKey(tbl.Name))
-                    continue;
-
                 if (db == MainDB)
                 {
-                    TableTextMain[tbl.Name] = GetTableText(db, tbl.Name);
+                    TableTextMain[tblName] = GetTableText(db, tblName);
                 }
                 else
                 {
-                    TableTextTest[tbl.Name] = GetTableText(db, tbl.Name);
+                    TableTextTest[tblName] = GetTableText(db, tblName);
                 }
 
-                if (!NodeTables.Nodes.ContainsKey(tbl.Name))
+                if (!NodeTables.Nodes.ContainsKey(tblName))
                 {
-                    TreeNode nt = new TreeNode(tbl.Name);
-                    nt.Name = tbl.Name;
+                    TreeNode nt = new TreeNode(tblName);
+                    nt.Name = tblName;
+                    nt.Tag = "U";
                     NodeTables.Nodes.Add(nt);
                 }
 
-                foreach (Trigger tr in tbl.Triggers)
+                foreach (Trigger tr in db.Tables[tblName].Triggers)
                 {
-                    if (!ChangedObjectsTest.ContainsKey(tr.Name) || ChangedObjectsTest[tr.Name] != "TR")
+                    if (!ChangedObjectsTest.ContainsKey(tr.Name))
                         continue;
 
                     if (db == MainDB)
                     {
-                        triggersToTablesMain[tr.Name] = tbl.Name;
+                        triggersToTablesMain[tr.Name] = tblName;
+                        TriggerTextMain[tr.Name] = GetTriggerText(db, tr.Name);
                     }
                     else
                     {
-                        triggersToTablesTest[tr.Name] = tbl.Name;
+                        triggersToTablesTest[tr.Name] = tblName;
+                        TriggerTextTest[tr.Name] = GetTriggerText(db, tr.Name);
                     }
 
                     if (!NodeTriggers.Nodes.ContainsKey(tr.Name))
                     {
                         TreeNode nt = new TreeNode(tr.Name);
                         nt.Name = tr.Name;
+                        nt.Tag = "TR";
                         NodeTriggers.Nodes.Add(nt);
                     }
                 }
             }
 
-
-            foreach (Microsoft.SqlServer.Management.Smo.View v in db.Views)
+            foreach (string vName in ChangedObjectsTest.Where(s => s.Value.Trim() == "V").Select(s => s.Key).ToList())
             {
-                if (!ChangedObjectsTest.ContainsKey(v.Name) || ChangedObjectsTest[v.Name] != "V")
+            //foreach (Microsoft.SqlServer.Management.Smo.View v in db.Views)
+            //{
+                if (!ChangedObjectsTest.ContainsKey(vName))
                     continue;
 
                 if (db == MainDB)
                 {
-                    ViewTextMain[v.Name] = GetViewText(db, v.Name);
+                    ViewTextMain[vName] = GetViewText(db, vName);
                 }
                 else
                 {
-                    ViewTextTest[v.Name] = GetViewText(db, v.Name);
+                    ViewTextTest[vName] = GetViewText(db, vName);
                 }
 
-                if (!NodeViews.Nodes.ContainsKey(v.Name))
+                if (!NodeViews.Nodes.ContainsKey(vName))
                 {
-                    TreeNode nt = new TreeNode(v.Name);
-                    nt.Name = v.Name;
+                    TreeNode nt = new TreeNode(vName);
+                    nt.Name = vName;
+                    nt.Tag = "V";
                     NodeViews.Nodes.Add(nt);
                 }
             }
 
 
-            foreach (StoredProcedure sp in db.StoredProcedures)
+            foreach (string spName in ChangedObjectsTest.Where(s => s.Value.Trim() == "P").Select(s => s.Key).ToList())
             {
-                if (!ChangedObjectsTest.ContainsKey(sp.Name) || ChangedObjectsTest[sp.Name] != "P")
+            //foreach (StoredProcedure sp in db.StoredProcedures)
+            //{
+                if (!ChangedObjectsTest.ContainsKey(spName))
                     continue;
 
                 if (db == MainDB)
                 {
-                    SPTextMain[sp.Name] = GetStoredProcedureText(db, sp.Name);
+                    SPTextMain[spName] = GetStoredProcedureText(db, spName);
                 }
                 else
                 {
-                    SPTextTest[sp.Name] = GetStoredProcedureText(db, sp.Name);
+                    SPTextTest[spName] = GetStoredProcedureText(db, spName);
                 }
 
-                if (!NodeSP.Nodes.ContainsKey(sp.Name))
+                if (!NodeSP.Nodes.ContainsKey(spName))
                 {
-                    TreeNode nt = new TreeNode(sp.Name);
-                    nt.Name = sp.Name;
+                    TreeNode nt = new TreeNode(spName);
+                    nt.Name = spName;
+                    nt.Tag = "P";
                     NodeSP.Nodes.Add(nt);
                 }
             }
 
-            foreach (UserDefinedFunction uf in db.UserDefinedFunctions)
+            foreach (string ufName in ChangedObjectsTest.Where(s => s.Value.Trim() == "FN").Select(s => s.Key).ToList())
             {
-                if (!ChangedObjectsTest.ContainsKey(uf.Name))// || ChangedObjectsTest[uf.Name] != )
+                //foreach (UserDefinedFunction uf in db.UserDefinedFunctions)
+                //{
+                if (!ChangedObjectsTest.ContainsKey(ufName))
                     continue;
 
                 if (db == MainDB)
                 {
-                    UFTextMain[uf.Name] = GetUFText(db, uf.Name);
+                    UFTextMain[ufName] = GetUFText(db, ufName);
                 }
                 else
                 {
-                    UFTextTest[uf.Name] = GetUFText(db, uf.Name);
+                    UFTextTest[ufName] = GetUFText(db, ufName);
                 }
 
-                if (!NodeUF.Nodes.ContainsKey(uf.Name))
+                if (!NodeUF.Nodes.ContainsKey(ufName))
                 {
-                    TreeNode nt = new TreeNode(uf.Name);
-                    nt.Name = uf.Name;
+                    TreeNode nt = new TreeNode(ufName);
+                    nt.Name = ufName;
+                    nt.Tag = "FN";
                     NodeUF.Nodes.Add(nt);
                 }
             }
 
-            foreach (UserDefinedType ut in db.UserDefinedTypes)
+            foreach (string utName in ChangedObjectsTest.Where(s => s.Value.Trim() == "TT").Select(s => s.Key).ToList())
             {
-                if (!ChangedObjectsTest.ContainsKey(ut.Name) || ChangedObjectsTest[ut.Name] != "TT")
+                //foreach (UserDefinedType ut in db.UserDefinedTypes)
+                //{
+                if (!ChangedObjectsTest.ContainsKey(utName))
                     continue;
 
                 if (db == MainDB)
                 {
-                    UFTextMain[ut.Name] = GetUFText(db, ut.Name);
+                    UFTextMain[utName] = GetUFText(db, utName);
                 }
                 else
                 {
-                    UFTextTest[ut.Name] = GetUFText(db, ut.Name);
+                    UFTextTest[utName] = GetUFText(db, utName);
                 }
 
-                if (!NodeUT.Nodes.ContainsKey(ut.Name))
+                if (!NodeUT.Nodes.ContainsKey(utName))
                 {
-                    TreeNode nt = new TreeNode(ut.Name);
-                    nt.Name = ut.Name;
+                    TreeNode nt = new TreeNode(utName);
+                    nt.Name = utName;
+                    nt.Tag = "TT";
                     NodeUT.Nodes.Add(nt);
                 }
             }
+        }
+
+        private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            //
+        }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            fctb.Text = GetNodeTestScript(e.Node);
+            textBox1.Text = e.Node.Name;
+        }
+
+        private string GetNodeMainScript(TreeNode node)
+        {
+            if (node.Tag == null)
+                return String.Empty;
+
+            switch (node.Tag.ToString())
+            {
+                case "TT":
+                    return UTTextMain[node.Name];
+
+                case "U":
+                    return TableTextMain[node.Name];
+
+                case "TR":
+                    return TriggerTextMain[node.Name];
+
+                case "FN":
+                    return UFTextMain[node.Name];
+
+                case "P":
+                    return SPTextMain[node.Name];
+
+                case "V":
+                    return ViewTextMain[node.Name];
+
+                default:
+                    break;
+            }
+
+            return String.Empty;
+        }
+
+        private string GetNodeTestScript(TreeNode node)
+        {
+            if (node.Tag == null)
+                return String.Empty;
+
+            switch (node.Tag.ToString())
+            {
+                case "TT":
+                    return UTTextTest[node.Name];
+
+                case "U":
+                    return TableTextTest[node.Name];
+
+                case "TR":
+                    return TriggerTextTest[node.Name];
+
+                case "FN":
+                    return UFTextTest[node.Name];
+
+                case "P":
+                    return SPTextTest[node.Name];
+
+                case "V":
+                    return ViewTextTest[node.Name];
+
+                default:
+                    break;
+            }
+
+            return String.Empty;
         }
     }
 }
