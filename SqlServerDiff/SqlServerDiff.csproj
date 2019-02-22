@@ -37,16 +37,16 @@
       <HintPath>..\FastColoredTextBox.dll</HintPath>
     </Reference>
     <Reference Include="Menees.Common">
-      <HintPath>..\..\..\Diff.Net\Menees.Common.dll</HintPath>
+      <HintPath>..\Menees.Common.dll</HintPath>
     </Reference>
     <Reference Include="Menees.Diffs">
-      <HintPath>..\..\..\Diff.Net\Menees.Diffs.dll</HintPath>
+      <HintPath>..\Menees.Diffs.dll</HintPath>
     </Reference>
     <Reference Include="Menees.Diffs.Controls">
-      <HintPath>..\..\..\Diff.Net\Menees.Diffs.Controls.dll</HintPath>
+      <HintPath>..\Menees.Diffs.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Menees.Windows.Forms">
-      <HintPath>..\..\..\Diff.Net\Menees.Windows.Forms.dll</HintPath>
+      <HintPath>..\Menees.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=14.100.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SqlServer.ExecProcTask, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
