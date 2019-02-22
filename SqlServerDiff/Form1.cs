@@ -245,6 +245,9 @@ namespace SqlServerDiff
 
         public string GetUTTableText(Database db, string name)
         {
+            name = name.Replace("TT_", "");
+            name = name.Substring(0, name.IndexOf("_") - 1);
+
             if (db.UserDefinedTableTypes[name] == null)
                 return null;
 
