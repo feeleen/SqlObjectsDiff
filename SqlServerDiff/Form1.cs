@@ -246,7 +246,7 @@ namespace SqlServerDiff
         public string GetUTTableText(Database db, string name)
         {
             name = name.Replace("TT_", "");
-            name = name.Substring(0, name.IndexOf("_") - 1);
+            name = name.Substring(0, name.LastIndexOf("_"));
 
             if (db.UserDefinedTableTypes[name] == null)
                 return null;
@@ -343,7 +343,13 @@ namespace SqlServerDiff
 
         private void AnalyzeDiffBtn_Click(object sender, EventArgs e)
         {
-            treeView1.Nodes.Clear();
+            NodeTables.Nodes.Clear();
+            NodeViews.Nodes.Clear();
+            NodeSP.Nodes.Clear();
+            NodeUT.Nodes.Clear();
+            NodeUF.Nodes.Clear();
+            NodeTriggers.Nodes.Clear();
+
             GetObjects(MainDB);
             GetObjects(TestDB);
         }
