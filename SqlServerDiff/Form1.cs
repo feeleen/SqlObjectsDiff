@@ -22,8 +22,8 @@ namespace SqlServerDiff
     public partial class Form1 : Form
     {
 
-        ServerConnection mainConn = new ServerConnection(ConfigurationManager.AppSettings["MainServer"]);
-        ServerConnection testConn = new ServerConnection(ConfigurationManager.AppSettings["TestServer"]);
+        ServerConnection mainConn = new ServerConnection();
+        ServerConnection testConn = new ServerConnection();
 
         Dictionary<string, string> triggersToTablesMain = new Dictionary<string, string>();
         Dictionary<string, string> triggersToTablesTest = new Dictionary<string, string>();
@@ -59,27 +59,43 @@ namespace SqlServerDiff
             }
         }
 
-        public Database MainDB
+		public string MainServerName
+		{
+			get { return ConfigurationManager.AppSettings["MainServer"].Replace(" ", ""); }
+		}
+
+		public string TestServerName
+		{
+			get { return ConfigurationManager.AppSettings["TestServer"].Replace(" ", ""); }
+		}
+
+		public string MainDBName
+		{
+			get { return ConfigurationManager.AppSettings["MainDatabase"].Replace(" ", ""); }
+		}
+
+		public string TestDBName
+		{
+			get { return ConfigurationManager.AppSettings["TestDatabase"].Replace(" ", ""); }
+		}
+
+		public Database MainDB
         {
             get {
-                string mainDBName = ConfigurationManager.AppSettings["MainDatabase"].Replace(" ", "");
-
-                if (!Regex.IsMatch(mainDBName, @"^[a-zA-Z0-9_]+$"))
+                if (!Regex.IsMatch(MainDBName, @"^[a-zA-Z0-9_]+$"))
                     throw new Exception("Main database name is not correct!");
 
-                return MainServer.Databases[mainDBName];
+                return MainServer.Databases[MainDBName];
             }
         }
 
         public Database TestDB
         {
             get {
-                string testDBName = ConfigurationManager.AppSettings["TestDatabase"].Replace(" ", "");
-
-                if (!Regex.IsMatch(testDBName, @"^[a-zA-Z0-9_]+$"))
+                if (!Regex.IsMatch(TestDBName, @"^[a-zA-Z0-9_]+$"))
                     throw new Exception("Test database name is not correct!");
 
-                return TestServer.Databases[testDBName];
+                return TestServer.Databases[TestDBName];
             }
         }
 
@@ -102,8 +118,10 @@ namespace SqlServerDiff
         public Form1()
 		{
 			InitializeComponent();
+			CenterToScreen();
 
-            treeView1.Nodes.Clear();
+
+			treeView1.Nodes.Clear();
             treeView1.Nodes.Add(NodeTables);
             treeView1.Nodes.Add(NodeViews);
             treeView1.Nodes.Add(NodeSP);
@@ -111,20 +129,38 @@ namespace SqlServerDiff
             treeView1.Nodes.Add(NodeUF);
             treeView1.Nodes.Add(NodeTriggers);
 
-            mainConn.LoginSecure = false;
-            testConn.LoginSecure = false;
-            
-            PasswordForm frm = new PasswordForm();
-            if (frm.ShowDialog() == DialogResult.OK)
-            {
-                mainConn.Login = frm.LoginBox.Text;
-                mainConn.Password = frm.PasswordBox.Text;
-                testConn.Login = frm.LoginBox.Text;
-                testConn.Password = frm.testPasswordBox.Text;
-            }
-            else
-                Application.Exit();
+			using (PasswordForm frm = new PasswordForm())
+			{
+				frm.StartPosition = FormStartPosition.CenterParent;
 
+				if (frm.ShowDialog() == DialogResult.OK)
+				{
+					
+					mainConn.ServerInstance = MainServerName;
+					mainConn.LoginSecure = false;
+
+					testConn.ServerInstance = TestServerName;
+					testConn.LoginSecure = false;
+
+					if (!frm.MainISBox.Checked)
+					{
+						mainConn.Login = frm.LoginBox.Text;
+						mainConn.Password = frm.PasswordBox.Text;
+					}
+					else
+						mainConn.ConnectionString = GetSSPIConnectionString(MainServerName, MainDBName);
+
+					if (!frm.TestISBox.Checked)
+					{
+						testConn.Login = frm.TestLoginBox.Text;
+						testConn.Password = frm.testPasswordBox.Text;
+					}
+					else
+						testConn.ConnectionString = GetSSPIConnectionString(TestServerName, TestDBName);
+				}
+				else
+					Application.Exit();
+			}
             mainConn.Connect();
             testConn.Connect();
 
@@ -141,7 +177,22 @@ namespace SqlServerDiff
 
 		}
 
-        private Dictionary<string, string> GetChangedObjects(Database db)
+		private string GetSSPIConnectionString(string server, string databaseName, string userName = "", string password = "")
+		{
+			var builder = new SqlConnectionStringBuilder
+			{
+				DataSource = server, // server address
+				InitialCatalog = databaseName, // database name
+				IntegratedSecurity = true, // server auth(false)/win auth(true)
+				MultipleActiveResultSets = false, // activate/deactivate MARS
+				PersistSecurityInfo = true, // hide login credentials
+				//UserID = userName, // user name
+				//Password = password // password
+			};
+			return builder.ConnectionString;
+		}
+
+		private Dictionary<string, string> GetChangedObjects(Database db)
         {
             string sql = $@"use {db.Name};
                 select

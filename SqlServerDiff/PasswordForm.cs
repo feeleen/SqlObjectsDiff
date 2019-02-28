@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -15,7 +16,11 @@ namespace SqlServerDiff
         public PasswordForm()
         {
             InitializeComponent();
-        }
+
+			LoginBox.Text = ConfigurationManager.AppSettings["MainServerLogin"];
+			TestLoginBox.Text = ConfigurationManager.AppSettings["TestServerLogin"];
+
+		}
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -33,5 +38,17 @@ namespace SqlServerDiff
             if (e.KeyData == Keys.Enter)
                 DialogResult = DialogResult.OK;
         }
-    }
+
+		private void MainISBox_CheckedChanged(object sender, EventArgs e)
+		{
+			PasswordBox.Enabled = !MainISBox.Checked;
+			LoginBox.Enabled = !MainISBox.Checked;
+		}
+
+		private void TestISBox_CheckedChanged(object sender, EventArgs e)
+		{
+			testPasswordBox.Enabled = !TestISBox.Checked;
+			TestLoginBox.Enabled = !TestISBox.Checked;
+		}
+	}
 }
