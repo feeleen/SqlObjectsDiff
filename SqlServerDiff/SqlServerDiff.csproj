@@ -90,6 +90,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="IDifferenceForm.cs" />
+    <Compile Include="ObjType.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PasswordForm.cs">
       <SubType>Form</SubType>
@@ -99,6 +100,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SchemaContainer.cs" />
     <Compile Include="ShowDiffArgs.cs" />
     <EmbeddedResource Include="FileDiffForm.resx">
       <DependentUpon>FileDiffForm.cs</DependentUpon>
