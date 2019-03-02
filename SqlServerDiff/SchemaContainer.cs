@@ -73,14 +73,7 @@ namespace SqlServerDiff
 			get { return ConfigurationManager.AppSettings[ServerTypeName + "Database"].Replace(" ", ""); }
 		}
 		
-		/*
-		public Dictionary<string, string> UserTableTypes = new Dictionary<string, string>();
-		public Dictionary<string, string> Tables = new Dictionary<string, string>();
-		public Dictionary<string, string> TableTriggers = new Dictionary<string, string>();
-		public Dictionary<string, string> UserFunctions = new Dictionary<string, string>();
-		public Dictionary<string, string> StoredProcedures = new Dictionary<string, string>();
-		public Dictionary<string, string> Views = new Dictionary<string, string>();
-		*/
+		
 		public Dictionary<string, string> TriggersToTables = new Dictionary<string, string>();
 		public Dictionary<string, string> TableText = new Dictionary<string, string>();
 		public Dictionary<string, string> SPText= new Dictionary<string, string>();
@@ -99,8 +92,8 @@ namespace SqlServerDiff
 				IntegratedSecurity = true, // server auth(false)/win auth(true)
 				MultipleActiveResultSets = false, // activate/deactivate MARS
 				PersistSecurityInfo = true, // hide login credentials
-											//UserID = userName, // user name
-											//Password = password // password
+				//UserID = userName, // user name
+				//Password = password // password
 			};
 			return builder.ConnectionString;
 		}
@@ -116,7 +109,12 @@ namespace SqlServerDiff
 			}
 		}
 
-		public Dictionary<string, string> GetChangedObjects(int days)
+		public Dictionary<string, Dictionary<string, string>> GetAllObjects()
+		{
+			return GetChangedObjects(-1);
+		}
+
+		public Dictionary<string, Dictionary<string, string>> GetChangedObjects(int days)
 		{
 			string sql = $@"use {Database.Name};
                 select
@@ -127,15 +125,48 @@ namespace SqlServerDiff
                 where modify_date > dateadd(d, -{days}, getdate())
                 order by modify_date desc";
 
+			if (days < 0)
+			{
+				sql = $@"use {Database.Name};
+                select
+                    name,
+                    type,
+                    type_desc
+                from sys.all_objects
+                order by modify_date desc";
+			}
+
 			DataSet set = Database.ExecuteWithResults(sql);
 
-			Dictionary<string, string> objects = new Dictionary<string, string>();
+			List<string> distinctTypes = null;
 
 			foreach (DataTable t in set.Tables)
 			{
-				foreach (DataRow row in t.Rows)
-					objects[row["name"].ToString()] = row["type"].ToString();
+				distinctTypes = t.AsEnumerable()
+					   .Select(s => new
+					   {
+						   id = s.Field<string>("type").ToString().ToUpper().Trim(),
+					   })
+					   .Distinct().ToList().Select(s=> s.id.ToString()).ToList();
 				break;
+			}
+
+			Dictionary<string, Dictionary<string, string>> objects = new Dictionary<string, Dictionary<string, string>>();
+
+			foreach (string ty in distinctTypes)
+			{
+				Dictionary<string, string> finalObjects = new Dictionary<string, string>();
+
+				foreach (DataTable t in set.Tables)
+				{
+					
+					foreach (DataRow row in t.Select("type = '" + ty + "'"))
+					{
+						finalObjects[row["name"].ToString()] = row["type"].ToString().Trim();
+					}
+					break;
+				}
+				objects[ty] = finalObjects;
 			}
 
 			return objects;

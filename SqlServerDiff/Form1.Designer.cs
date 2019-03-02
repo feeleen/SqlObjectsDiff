@@ -30,12 +30,12 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-			System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Tables");
-			System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Triggers");
-			System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Stored Procedures");
-			System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Functions");
-			System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("User Types");
-			System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Views");
+			System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Tables");
+			System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Triggers");
+			System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Stored Procedures");
+			System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Functions");
+			System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("User Types");
+			System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Views");
 			this.ViewDiffBtn = new System.Windows.Forms.Button();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -48,6 +48,8 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.RawCompareBox = new System.Windows.Forms.CheckBox();
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.fctb)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -78,7 +80,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(1, 17);
+			this.label1.Location = new System.Drawing.Point(11, 17);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(76, 13);
 			this.label1.TabIndex = 2;
@@ -91,6 +93,7 @@
 			this.SearchBtn.Size = new System.Drawing.Size(75, 23);
 			this.SearchBtn.TabIndex = 3;
 			this.SearchBtn.Text = "Search";
+			this.toolTip1.SetToolTip(this.SearchBtn, "searchMain server for object");
 			this.SearchBtn.UseVisualStyleBackColor = true;
 			this.SearchBtn.Click += new System.EventHandler(this.SearchBtn_Click);
 			// 
@@ -142,25 +145,25 @@
 			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.treeView1.Location = new System.Drawing.Point(0, 0);
 			this.treeView1.Name = "treeView1";
-			treeNode1.Name = "NodeTables";
-			treeNode1.Text = "Tables";
-			treeNode2.Name = "NodeTriggers";
-			treeNode2.Text = "Triggers";
-			treeNode3.Name = "NodeSP";
-			treeNode3.Text = "Stored Procedures";
-			treeNode4.Name = "NodeFn";
-			treeNode4.Text = "Functions";
-			treeNode5.Name = "NodeUserTypes";
-			treeNode5.Text = "User Types";
-			treeNode6.Name = "NodeViews";
-			treeNode6.Text = "Views";
+			treeNode19.Name = "NodeTables";
+			treeNode19.Text = "Tables";
+			treeNode20.Name = "NodeTriggers";
+			treeNode20.Text = "Triggers";
+			treeNode21.Name = "NodeSP";
+			treeNode21.Text = "Stored Procedures";
+			treeNode22.Name = "NodeFn";
+			treeNode22.Text = "Functions";
+			treeNode23.Name = "NodeUserTypes";
+			treeNode23.Text = "User Types";
+			treeNode24.Name = "NodeViews";
+			treeNode24.Text = "Views";
 			this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4,
-            treeNode5,
-            treeNode6});
+            treeNode19,
+            treeNode20,
+            treeNode21,
+            treeNode22,
+            treeNode23,
+            treeNode24});
 			this.treeView1.Size = new System.Drawing.Size(340, 384);
 			this.treeView1.TabIndex = 6;
 			this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
@@ -232,15 +235,29 @@
 			// StatusLabel
 			// 
 			this.StatusLabel.Name = "StatusLabel";
-			this.StatusLabel.Size = new System.Drawing.Size(984, 17);
+			this.StatusLabel.Size = new System.Drawing.Size(1015, 17);
 			this.StatusLabel.Spring = true;
 			this.StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// RawCompareBox
+			// 
+			this.RawCompareBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.RawCompareBox.AutoSize = true;
+			this.RawCompareBox.Location = new System.Drawing.Point(583, 15);
+			this.RawCompareBox.Name = "RawCompareBox";
+			this.RawCompareBox.Size = new System.Drawing.Size(92, 17);
+			this.RawCompareBox.TabIndex = 12;
+			this.RawCompareBox.Text = "Raw compare";
+			this.toolTip1.SetToolTip(this.RawCompareBox, "Raw comparison of all objects of Main and Test servers (it may take a long time f" +
+        "or big databases)");
+			this.RawCompareBox.UseVisualStyleBackColor = true;
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1030, 450);
+			this.Controls.Add(this.RawCompareBox);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.DaysBox);
 			this.Controls.Add(this.AnalyzeDiffBtn);
@@ -279,6 +296,8 @@
         private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.StatusStrip statusStrip1;
 		private System.Windows.Forms.ToolStripStatusLabel StatusLabel;
+		private System.Windows.Forms.CheckBox RawCompareBox;
+		private System.Windows.Forms.ToolTip toolTip1;
 	}
 }
 

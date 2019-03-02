@@ -33,7 +33,10 @@ namespace SqlServerDiff
         TreeNode NodeUF = new TreeNode("User Functions");
         TreeNode NodeTriggers = new TreeNode("Triggers");
 
-		Dictionary<string, string> ChangedObjects = null;
+		Dictionary<string, Dictionary<string, string>> ChangedObjectsTest = null;
+
+		Dictionary<string, Dictionary<string, string>> AllObjectsTest = null;
+		Dictionary<string, Dictionary<string, string>> AllObjectsMain = null;
 
 
 		public Form1()
@@ -81,18 +84,15 @@ namespace SqlServerDiff
 			MainSchema.Connection.Connect();
 			TestSchema.Connection.Connect();
 
-			// track changes only from test!
-			ChangedObjects = TestSchema.GetChangedObjects(Convert.ToInt32(DaysBox.Value));
-
 			MainSchema.InitTriggerList();
 			TestSchema.InitTriggerList();
-
 		}
 
 		
 
 
-        private void TextArea_KeyPress(object sender, KeyPressEventArgs e)
+
+		private void TextArea_KeyPress(object sender, KeyPressEventArgs e)
         {
             
         }
@@ -179,14 +179,50 @@ namespace SqlServerDiff
 			{
 				wf.ShowDialog(this);
 			}
-
-			
         }
 
 		public void LoadObjects()
 		{
-			GetObjects(MainSchema);
-			GetObjects(TestSchema);
+			if (RawCompareBox.Checked)
+			{
+				AllObjectsTest = TestSchema.GetAllObjects();
+				AllObjectsMain = MainSchema.GetAllObjects();
+
+				// union all objects from main & test
+				Dictionary<string, Dictionary<string, string>> differentObjects = new Dictionary<string, Dictionary<string, string>>();
+
+				foreach (string oType in AllObjectsMain.Keys)
+				{
+					if (!differentObjects.ContainsKey(oType))
+						differentObjects[oType] = new Dictionary<string, string>();
+
+					foreach (string mainObjName in AllObjectsMain[oType].Keys)
+					{
+						if (!differentObjects[oType].ContainsKey(oType))
+							differentObjects[oType][mainObjName] = oType;
+					}
+				}
+
+				foreach (string oType in AllObjectsTest.Keys)
+				{
+					if (!differentObjects.ContainsKey(oType))
+						differentObjects[oType] = new Dictionary<string, string>();
+
+					foreach (string mainObjName in AllObjectsTest[oType].Keys)
+					{
+						if (!differentObjects[oType].ContainsKey(oType))
+							differentObjects[oType][mainObjName] = oType;
+					}
+				}
+
+				GetObjects(MainSchema, TestSchema, differentObjects);
+			}
+			else
+			{
+				// track changes only from test!
+				ChangedObjectsTest = TestSchema.GetChangedObjects(Convert.ToInt32(DaysBox.Value));
+				GetObjects(MainSchema, TestSchema, ChangedObjectsTest);
+			}
 		}
 
 		public void AppendChildNode(TreeNode parent, string tblName, string tag)
@@ -206,93 +242,113 @@ namespace SqlServerDiff
 			parent.Text = $"{parent.ToolTipText} ({parent.Nodes.Count})";
 		}
 
-        private void GetObjects(SchemaContainer schema)
+        private void GetObjects(SchemaContainer schema, SchemaContainer schemaTest, Dictionary<string, Dictionary<string, string>> changedObjects)
         {
-			foreach (string tblName in ChangedObjects.Where(s => s.Value.Trim() == ObjType.Table).Select(s => s.Key).ToList())
-            {
-                schema.TableText[tblName] = schema.GetTableText(tblName);
+			if (changedObjects.ContainsKey(ObjType.Table))
+			{
+				foreach (string tblName in changedObjects[ObjType.Table].Select(s => s.Key).ToList())
+				{
+					if (!changedObjects[ObjType.Table].ContainsKey(tblName))
+						continue;
 
-				if (!NodeTables.Nodes.ContainsKey(tblName))
-                {
-					AppendChildNode(NodeTables, tblName, ObjType.Table);
-				}
+					schema.TableText[tblName] = schema.GetTableText(tblName);
+					schemaTest.TableText[tblName] = schemaTest.GetTableText(tblName);
 
-                foreach (Trigger tr in schema.Database.Tables[tblName].Triggers)
-                {
-                    if (!ChangedObjects.ContainsKey(tr.Name))
-                        continue;
+					if (schemaTest.TableText[tblName] != schema.TableText[tblName])
+					{
+						AppendChildNode(NodeTables, tblName, ObjType.Table);
+					}
 
-                    schema.TriggersToTables[tr.Name] = tblName;
-					schema.TriggerText[tr.Name] = schema.GetTriggerText(tr.Name);
-                    
-                    if (!NodeTriggers.Nodes.ContainsKey(tr.Name))
-                    {
-						AppendChildNode(NodeTriggers, tr.Name, ObjType.TableTrigger);
+					if (changedObjects.ContainsKey(ObjType.TableTrigger))
+					{
+						//foreach (Trigger tr in schema.Database.Tables[tblName].Triggers)
+						foreach (string trName in changedObjects[ObjType.TableTrigger].Select(s => s.Key).ToList())
+						{
+							if (!changedObjects.ContainsKey(trName))
+								continue;
+
+							//schema.TriggersToTables[trName] = tblName;
+							schema.TriggerText[trName] = schema.GetTriggerText(trName);
+
+							schemaTest.TriggersToTables[trName] = tblName;
+							schemaTest.TriggerText[trName] = schemaTest.GetTriggerText(trName);
+
+							if (schemaTest.TriggerText[trName] != schema.TriggerText[trName])
+							{
+								AppendChildNode(NodeTriggers, trName, ObjType.TableTrigger);
+							}
+						}
 					}
 				}
-            }
+			}
 
-            foreach (string vName in ChangedObjects.Where(s => s.Value.Trim() == ObjType.View).Select(s => s.Key).ToList())
-            {
-            //foreach (Microsoft.SqlServer.Management.Smo.View v in db.Views)
-            //{
-                if (!ChangedObjects.ContainsKey(vName))
-                    continue;
+			if (changedObjects.ContainsKey(ObjType.View))
+			{
+				foreach (string vName in changedObjects[ObjType.View].Select(s => s.Key).ToList())
+				{
+					if (!changedObjects[ObjType.View].ContainsKey(vName))
+						continue;
 
-                schema.ViewText[vName] = schema.GetViewText(vName);
-                
+					schema.ViewText[vName] = schema.GetViewText(vName);
+					schemaTest.ViewText[vName] = schemaTest.GetViewText(vName);
 
-                if (!NodeViews.Nodes.ContainsKey(vName))
-                {
-					AppendChildNode(NodeViews, vName, ObjType.View);
-                }
-            }
+					if (schemaTest.ViewText[vName]!= schema.ViewText[vName])
+					{
+						AppendChildNode(NodeViews, vName, ObjType.View);
+					}
+				}
+			}
 
+			if (changedObjects.ContainsKey(ObjType.StoredProcedure))
+			{
+				foreach (string spName in changedObjects[ObjType.StoredProcedure].Select(s => s.Key).ToList())
+				{
+					if (!changedObjects[ObjType.StoredProcedure].ContainsKey(spName))
+						continue;
 
-            foreach (string spName in ChangedObjects.Where(s => s.Value.Trim() == ObjType.StoredProcedure).Select(s => s.Key).ToList())
-            {
-            //foreach (StoredProcedure sp in db.StoredProcedures)
-            //{
-                if (!ChangedObjects.ContainsKey(spName))
-                    continue;
+					schema.SPText[spName] = schema.GetStoredProcedureText(spName);
+					schemaTest.SPText[spName] = schemaTest.GetStoredProcedureText(spName);
 
-                schema.SPText[spName] = schema.GetStoredProcedureText(spName);
+					if (schemaTest.SPText[spName]!= schema.SPText[spName])
+					{
+						AppendChildNode(NodeSP, spName, ObjType.StoredProcedure);
+					}
+				}
+			}
 
-                if (!NodeSP.Nodes.ContainsKey(spName))
-                {
-					AppendChildNode(NodeSP, spName, ObjType.StoredProcedure);
-                }
-            }
+			if (changedObjects.ContainsKey(ObjType.UserFunction))
+			{
+				foreach (string ufName in changedObjects[ObjType.UserFunction].Select(s => s.Key).ToList())
+				{
+					if (!changedObjects[ObjType.UserFunction].ContainsKey(ufName))
+						continue;
 
-            foreach (string ufName in ChangedObjects.Where(s => s.Value.Trim() == ObjType.UserFunction).Select(s => s.Key).ToList())
-            {
-                //foreach (UserDefinedFunction uf in db.UserDefinedFunctions)
-                //{
-                if (!ChangedObjects.ContainsKey(ufName))
-                    continue;
+					schema.UFText[ufName] = schema.GetUFText(ufName);
+					schemaTest.UFText[ufName] = schemaTest.GetUFText(ufName);
 
-                schema.UFText[ufName] = schema.GetUFText(ufName);
+					if (schemaTest.UFText[ufName]!= schema.UFText[ufName])
+					{
+						AppendChildNode(NodeUF, ufName, ObjType.UserFunction);
+					}
+				}
+			}
 
-                if (!NodeUF.Nodes.ContainsKey(ufName))
-                {
-					AppendChildNode(NodeUF, ufName, ObjType.UserFunction);
-                }
-            }
+			if (changedObjects.ContainsKey(ObjType.UserTableType))
+			{
+				foreach (string utName in changedObjects[ObjType.UserTableType].Select(s => s.Key).ToList())
+				{
+					if (!changedObjects[ObjType.UserTableType].ContainsKey(utName))
+						continue;
 
-            foreach (string utName in ChangedObjects.Where(s => s.Value.Trim() == ObjType.UserTableType).Select(s => s.Key).ToList())
-            {
-                //foreach (UserDefinedType ut in db.UserDefinedTypes)
-                //{
-                if (!ChangedObjects.ContainsKey(utName))
-                    continue;
+					schema.UTText[utName] = schema.GetUTTableText(utName);
+					schemaTest.UTText[utName] = schemaTest.GetUTTableText(utName);
 
-				schema.UTText[utName] = schema.GetUTTableText(utName);
-
-                if (!NodeUT.Nodes.ContainsKey(utName))
-                {
-					AppendChildNode(NodeUT, utName, ObjType.UserTableType);
-                }
-            }
+					if (schemaTest.UTText[utName]!= schema.UTText[utName])
+					{
+						AppendChildNode(NodeUT, utName, ObjType.UserTableType);
+					}
+				}
+			}
         }
 
         private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -302,11 +358,11 @@ namespace SqlServerDiff
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            fctb.Text = GetNodeScript(e.Node, TestSchema);
+            fctb.Text = GetNodeScript(e.Node);
             textBox1.Text = e.Node.Name;
         }
 
-        private string GetNodeScript(TreeNode node, SchemaContainer schema)
+        private string GetNodeScript(TreeNode node)
         {
             if (node.Tag == null)
                 return String.Empty;
@@ -314,24 +370,24 @@ namespace SqlServerDiff
             switch (node.Tag.ToString())
             {
                 case ObjType.UserTableType:
-                    return schema.UTText[node.Name];
+                    return TestSchema.UTText[node.Name] == null ? MainSchema.UTText[node.Name] : TestSchema.UTText[node.Name];
 
                 case ObjType.Table:
-                    return schema.TableText[node.Name];
+                    return TestSchema.TableText[node.Name] == null ? MainSchema.TableText[node.Name] : TestSchema.TableText[node.Name];
 
-                case ObjType.TableTrigger:
-                    return schema.TriggerText[node.Name];
+				case ObjType.TableTrigger:
+                    return TestSchema.TriggerText[node.Name] == null ? MainSchema.TriggerText[node.Name] : TestSchema.TriggerText[node.Name];
 
-                case ObjType.UserFunction:
-                    return schema.UFText[node.Name];
+				case ObjType.UserFunction:
+                    return TestSchema.UFText[node.Name] == null ? MainSchema.UFText[node.Name] : TestSchema.UFText[node.Name];
 
-                case ObjType.StoredProcedure:
-                    return schema.SPText[node.Name];
+				case ObjType.StoredProcedure:
+                    return TestSchema.SPText[node.Name] == null ? MainSchema.SPText[node.Name] : TestSchema.SPText[node.Name];
 
-                case ObjType.View:
-                    return schema.ViewText[node.Name];
+				case ObjType.View:
+                    return TestSchema.ViewText[node.Name] == null ? MainSchema.ViewText[node.Name] : TestSchema.ViewText[node.Name];
 
-                default:
+				default:
                     break;
             }
 

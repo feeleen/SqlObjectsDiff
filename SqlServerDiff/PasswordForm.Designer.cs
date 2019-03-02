@@ -41,6 +41,7 @@
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.TestLoginBox = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -142,7 +143,7 @@
 			this.groupBox1.Size = new System.Drawing.Size(195, 118);
 			this.groupBox1.TabIndex = 6;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Main server";
+			this.groupBox1.Text = "Main server*";
 			// 
 			// groupBox2
 			// 
@@ -156,7 +157,7 @@
 			this.groupBox2.Size = new System.Drawing.Size(198, 118);
 			this.groupBox2.TabIndex = 7;
 			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Test server";
+			this.groupBox2.Text = "Test server*";
 			// 
 			// TestLoginBox
 			// 
@@ -174,22 +175,33 @@
 			this.label4.TabIndex = 3;
 			this.label4.Text = "Login";
 			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(12, 152);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(288, 13);
+			this.label3.TabIndex = 8;
+			this.label3.Text = "*Use App.config to specify server names && database names";
+			// 
 			// PasswordForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(436, 182);
+			this.Controls.Add(this.label3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.button1);
 			this.Name = "PasswordForm";
-			this.Text = "PasswordForm";
+			this.Text = "Login";
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PasswordForm_KeyDown);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
@@ -207,5 +219,6 @@
 		private System.Windows.Forms.GroupBox groupBox2;
 		public System.Windows.Forms.TextBox TestLoginBox;
 		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label label3;
 	}
 }
