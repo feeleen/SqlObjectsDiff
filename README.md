@@ -11,6 +11,6 @@ Main window
 
 
 
-settingsvia app.config:
+Settings via app.config:
 
 ![Screenshot](https://i.snag.gy/VLwPx8.jpg)
