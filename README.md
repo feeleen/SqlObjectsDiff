@@ -1,4 +1,12 @@
 # SqlObjectsDiff
+Usage:
+
+1. Modify App.config
+2. Launch app
+3. Press "Analyze Changed Objects" button
+4. Select object in a tree view
+5. Press "View diff" button
+
 
 Login window
 
