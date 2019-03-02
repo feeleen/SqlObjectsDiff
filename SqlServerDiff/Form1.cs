@@ -116,7 +116,7 @@ namespace SqlServerDiff
 
         private void ViewDiffBtn_Click(object sender, EventArgs e)
 		{
-            if (MainSchema.Database.StoredProcedures[textBox1.Text.Trim()] != null || TestSchema.Database.StoredProcedures[textBox1.Text.Trim()] != null)
+            if (MainSchema.SPText.ContainsKey(textBox1.Text.Trim()) || TestSchema.SPText.ContainsKey(textBox1.Text.Trim()))
             {
                 ShowDifferences(MainSchema.GetStoredProcedureText(textBox1.Text.Trim()), TestSchema.GetStoredProcedureText(textBox1.Text.Trim()), DiffType.Text);
             }
@@ -124,19 +124,19 @@ namespace SqlServerDiff
             {
                 ShowDifferences(MainSchema.GetTriggerText(textBox1.Text.Trim()), TestSchema.GetTriggerText(textBox1.Text.Trim()), DiffType.Text);
             }
-            else if (MainSchema.Views[textBox1.Text.Trim()] != null || TestSchema.Views[textBox1.Text.Trim()] != null)
+            else if (MainSchema.ViewText.ContainsKey(textBox1.Text.Trim()) || TestSchema.ViewText.ContainsKey(textBox1.Text.Trim()))
             { 
                 ShowDifferences(MainSchema.GetViewText(textBox1.Text.Trim()), TestSchema.GetViewText(textBox1.Text.Trim()), DiffType.Text);
             }
-            else if (MainSchema.Tables[textBox1.Text.Trim()] != null || TestSchema.Tables[textBox1.Text.Trim()] != null)
+            else if (MainSchema.TableText.ContainsKey(textBox1.Text.Trim()) || TestSchema.TableText.ContainsKey(textBox1.Text.Trim()))
             {
                 ShowDifferences(MainSchema.GetTableText(textBox1.Text.Trim()), TestSchema.GetTableText(textBox1.Text.Trim()), DiffType.Text);
             }
-            else if (MainSchema.UserFunctions[textBox1.Text.Trim()] != null || TestSchema.UserFunctions[textBox1.Text.Trim()] != null)
+            else if (MainSchema.UFText.ContainsKey(textBox1.Text.Trim()) || TestSchema.UFText.ContainsKey(textBox1.Text.Trim()))
             {
                 ShowDifferences(MainSchema.GetUFText(textBox1.Text.Trim()), TestSchema.GetUFText(textBox1.Text.Trim()), DiffType.Text);
             }
-            else if (MainSchema.UserTableTypes[textBox1.Text.Trim()] != null || TestSchema.UserTableTypes[textBox1.Text.Trim()] != null)
+            else if (MainSchema.UTText.ContainsKey(textBox1.Text.Trim()) || TestSchema.UTText.ContainsKey(textBox1.Text.Trim()))
             {
                 ShowDifferences(MainSchema.GetUTTableText(textBox1.Text.Trim()), TestSchema.GetUTTableText(textBox1.Text.Trim()), DiffType.Text);
             }
@@ -175,12 +175,30 @@ namespace SqlServerDiff
             NodeUF.Nodes.Clear();
             NodeTriggers.Nodes.Clear();
 
-            GetObjects(MainSchema);
-            GetObjects(TestSchema);
+			using (WaitForm wf = new WaitForm(LoadObjects))
+			{
+				wf.ShowDialog(this);
+			}
+
+			
         }
+
+		public void LoadObjects()
+		{
+			GetObjects(MainSchema);
+			GetObjects(TestSchema);
+		}
 
 		public void AppendChildNode(TreeNode parent, string tblName, string tag)
 		{
+			if (InvokeRequired)
+			{
+				Invoke((MethodInvoker)delegate {
+					AppendChildNode(parent, tblName, tag);
+				});
+				return;
+			}
+
 			TreeNode nt = new TreeNode(tblName);
 			nt.Name = tblName;
 			nt.Tag = tag;

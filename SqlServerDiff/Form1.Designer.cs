@@ -30,12 +30,12 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-			System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Tables");
-			System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Triggers");
-			System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Stored Procedures");
-			System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Functions");
-			System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("User Types");
-			System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Views");
+			System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Tables");
+			System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Triggers");
+			System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Stored Procedures");
+			System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Functions");
+			System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("User Types");
+			System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Views");
 			this.ViewDiffBtn = new System.Windows.Forms.Button();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -46,12 +46,15 @@
 			this.AnalyzeDiffBtn = new System.Windows.Forms.Button();
 			this.DaysBox = new System.Windows.Forms.NumericUpDown();
 			this.label2 = new System.Windows.Forms.Label();
+			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+			this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			((System.ComponentModel.ISupportInitialize)(this.fctb)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DaysBox)).BeginInit();
+			this.statusStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ViewDiffBtn
@@ -130,7 +133,7 @@
 			this.fctb.RightBracket = ')';
 			this.fctb.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
 			this.fctb.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctb.ServiceColors")));
-			this.fctb.Size = new System.Drawing.Size(679, 406);
+			this.fctb.Size = new System.Drawing.Size(679, 384);
 			this.fctb.TabIndex = 5;
 			this.fctb.Zoom = 100;
 			// 
@@ -139,26 +142,26 @@
 			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.treeView1.Location = new System.Drawing.Point(0, 0);
 			this.treeView1.Name = "treeView1";
-			treeNode19.Name = "NodeTables";
-			treeNode19.Text = "Tables";
-			treeNode20.Name = "NodeTriggers";
-			treeNode20.Text = "Triggers";
-			treeNode21.Name = "NodeSP";
-			treeNode21.Text = "Stored Procedures";
-			treeNode22.Name = "NodeFn";
-			treeNode22.Text = "Functions";
-			treeNode23.Name = "NodeUserTypes";
-			treeNode23.Text = "User Types";
-			treeNode24.Name = "NodeViews";
-			treeNode24.Text = "Views";
+			treeNode1.Name = "NodeTables";
+			treeNode1.Text = "Tables";
+			treeNode2.Name = "NodeTriggers";
+			treeNode2.Text = "Triggers";
+			treeNode3.Name = "NodeSP";
+			treeNode3.Text = "Stored Procedures";
+			treeNode4.Name = "NodeFn";
+			treeNode4.Text = "Functions";
+			treeNode5.Name = "NodeUserTypes";
+			treeNode5.Text = "User Types";
+			treeNode6.Name = "NodeViews";
+			treeNode6.Text = "Views";
 			this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode19,
-            treeNode20,
-            treeNode21,
-            treeNode22,
-            treeNode23,
-            treeNode24});
-			this.treeView1.Size = new System.Drawing.Size(340, 406);
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4,
+            treeNode5,
+            treeNode6});
+			this.treeView1.Size = new System.Drawing.Size(340, 384);
 			this.treeView1.TabIndex = 6;
 			this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
 			this.treeView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDoubleClick);
@@ -178,7 +181,7 @@
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.fctb);
-			this.splitContainer1.Size = new System.Drawing.Size(1023, 406);
+			this.splitContainer1.Size = new System.Drawing.Size(1023, 384);
 			this.splitContainer1.SplitterDistance = 340;
 			this.splitContainer1.TabIndex = 7;
 			// 
@@ -216,6 +219,23 @@
 			this.label2.TabIndex = 10;
 			this.label2.Text = "Days:";
 			// 
+			// statusStrip1
+			// 
+			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.StatusLabel});
+			this.statusStrip1.Location = new System.Drawing.Point(0, 428);
+			this.statusStrip1.Name = "statusStrip1";
+			this.statusStrip1.Size = new System.Drawing.Size(1030, 22);
+			this.statusStrip1.TabIndex = 11;
+			this.statusStrip1.Text = "statusStrip1";
+			// 
+			// StatusLabel
+			// 
+			this.StatusLabel.Name = "StatusLabel";
+			this.StatusLabel.Size = new System.Drawing.Size(984, 17);
+			this.StatusLabel.Spring = true;
+			this.StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -229,14 +249,17 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.ViewDiffBtn);
+			this.Controls.Add(this.statusStrip1);
 			this.Name = "Form1";
-			this.Text = "SqlServerDiff - Compare objects between Main and Test";
+			this.Text = "SqlServerDiff - Compare objects between Main and Test Sql Servers";
 			((System.ComponentModel.ISupportInitialize)(this.fctb)).EndInit();
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DaysBox)).EndInit();
+			this.statusStrip1.ResumeLayout(false);
+			this.statusStrip1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -254,6 +277,8 @@
         private System.Windows.Forms.Button AnalyzeDiffBtn;
         private System.Windows.Forms.NumericUpDown DaysBox;
         private System.Windows.Forms.Label label2;
-    }
+		private System.Windows.Forms.StatusStrip statusStrip1;
+		private System.Windows.Forms.ToolStripStatusLabel StatusLabel;
+	}
 }
 

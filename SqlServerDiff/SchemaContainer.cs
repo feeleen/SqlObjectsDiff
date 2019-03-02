@@ -73,14 +73,15 @@ namespace SqlServerDiff
 			get { return ConfigurationManager.AppSettings[ServerTypeName + "Database"].Replace(" ", ""); }
 		}
 		
+		/*
 		public Dictionary<string, string> UserTableTypes = new Dictionary<string, string>();
 		public Dictionary<string, string> Tables = new Dictionary<string, string>();
 		public Dictionary<string, string> TableTriggers = new Dictionary<string, string>();
 		public Dictionary<string, string> UserFunctions = new Dictionary<string, string>();
 		public Dictionary<string, string> StoredProcedures = new Dictionary<string, string>();
 		public Dictionary<string, string> Views = new Dictionary<string, string>();
+		*/
 		public Dictionary<string, string> TriggersToTables = new Dictionary<string, string>();
-
 		public Dictionary<string, string> TableText = new Dictionary<string, string>();
 		public Dictionary<string, string> SPText= new Dictionary<string, string>();
 		public Dictionary<string, string> TriggerText= new Dictionary<string, string>();
@@ -197,6 +198,9 @@ namespace SqlServerDiff
 
 		public string GetUTTableText(string name)
 		{
+			if (name.LastIndexOf("_") == -1)
+				return null;
+
 			name = name.Replace("TT_", "");
 			name = name.Substring(0, name.LastIndexOf("_"));
 
