@@ -65,20 +65,24 @@ namespace SqlServerDiff
 
 				if (frm.ShowDialog() == DialogResult.OK)
 				{
-					if (!frm.MainISBox.Checked)
-					{
-						MainSchema.Connection.Login = frm.LoginBox.Text;
-						MainSchema.Connection.Password = frm.PasswordBox.Text;
-					}
-					
-					if (!frm.TestISBox.Checked)
+                    if (!frm.MainISBox.Checked)
+                    {
+                        MainSchema.Connection.Login = frm.LoginBox.Text;
+                        MainSchema.Connection.Password = frm.PasswordBox.Text;
+                    }
+                    else
+                        MainSchema.UseConnectionString();
+
+                    if (!frm.TestISBox.Checked)
 					{
 						TestSchema.Connection.Login = frm.TestLoginBox.Text;
 						TestSchema.Connection.Password = frm.testPasswordBox.Text;
 					}
-					
-				}
-				else
+                    else
+                        TestSchema.UseConnectionString();
+
+                }
+                else
 					Application.Exit();
 			}
 			MainSchema.Connection.Connect();

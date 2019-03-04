@@ -20,11 +20,10 @@ namespace SqlServerDiff
 			
 		public SchemaContainer(ServerType servertype)
 		{
+			this.servertype = servertype;
 			conn.ServerInstance = ServerName;
 			conn.LoginSecure = false;
-			conn.ConnectionString = GetSSPIConnectionString(ServerName, DBName);
 			myServer = new Server(conn);
-			this.servertype = servertype;
 		}
 
 		public Server Server
@@ -41,7 +40,7 @@ namespace SqlServerDiff
 			get
 			{
 				if (!Regex.IsMatch(DBName, @"^[a-zA-Z0-9_]+$"))
-					throw new Exception("Main database name is not correct!");
+					throw new Exception(ServerTypeName + " database name is not correct!");
 
 				return this.Server.Databases[DBName];
 			}
@@ -62,6 +61,11 @@ namespace SqlServerDiff
 			}
 			set { }
 		}
+
+        public void UseConnectionString()
+        {
+            conn.ConnectionString = GetSSPIConnectionString(ServerName, DBName);
+        }
 
 		public string ServerName
 		{
