@@ -1,4 +1,7 @@
 # SqlObjectsDiff
+
+[![Build Status](https://travis-ci.com/feeleen/SqlObjectsDiff.svg?branch=master)](https://travis-ci.com/feeleen/SqlObjectsDiff)
+
 Usage:
 
 1. Modify App.config
