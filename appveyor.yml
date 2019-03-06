@@ -2,6 +2,9 @@ version: 1.0.{build}
 clone_folder: c:\SqlObjectsDiff
 image: Visual Studio 2017
 
+before_build:
+- nuget restore SqlServerDiff.sln
+
 build:
   project: SqlServerDiff.sln
   parallel: true
