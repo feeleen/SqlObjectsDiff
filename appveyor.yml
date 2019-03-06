@@ -4,10 +4,8 @@ clone_folder: c:\SqlObjectsDiff
 image: Visual Studio 2017
 
 before_build:
-- nuget restore SqlServerDiff.sln
-
-build:
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null
+  - nuget restore SqlServerDiff.sln
+  - ps: >- [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null
   [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SmoExtended") | Out-Null
   [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.ConnectionInfo") | Out-Null
   [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.ExecProcTask") | Out-Null
@@ -21,6 +19,7 @@ build:
   [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | Out-Null
   [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Management.RegisteredServers") | Out-Null
 
+build:
   project: SqlServerDiff.sln
   parallel: true
   verbosity: minimal
