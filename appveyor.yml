@@ -5,19 +5,18 @@ image: Visual Studio 2017
 
 before_build:
   #- nuget restore SqlServerDiff.sln
-  - ps: >-
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SmoExtended") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.ConnectionInfo") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.ExecProcTask") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Management.CollectorEnum") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Management.RegisteredServers") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Management.SqlParser") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Management.SystemMetadataProvider") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Management.Utility") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlEnum") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | Out-Null;
-  [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Management.RegisteredServers") | Out-Null;
+  - ps: "[reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.Smo\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.SmoExtended\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.ConnectionInfo\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.ExecProcTask\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.Management.CollectorEnum\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.Management.RegisteredServers\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.Management.SqlParser\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.Management.SystemMetadataProvider\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.Management.Utility\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.SqlEnum\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.SqlWmiManagement\") | Out-Null\n
+  [reflection.assembly]::LoadWithPartialName(\"Microsoft.SqlServer.Management.RegisteredServers\") | Out-Null\n"
 
 build:
   project: SqlServerDiff.sln
