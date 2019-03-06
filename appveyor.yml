@@ -1,0 +1,8 @@
+version: 1.0.{build}
+clone_folder: c:\SqlObjectsDiff
+image: Visual Studio 2017
+
+build:
+  project: SqlServerDiff.sln
+  parallel: true
+  verbosity: minimal
