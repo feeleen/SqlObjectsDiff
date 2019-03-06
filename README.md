@@ -1,6 +1,7 @@
 # SqlObjectsDiff
 
-[![Build Status](https://travis-ci.com/feeleen/SqlObjectsDiff.svg?branch=master)](https://travis-ci.com/feeleen/SqlObjectsDiff)
+[![Build status](https://ci.appveyor.com/api/projects/status/5okaap5yqeo906ub?svg=true)](https://ci.appveyor.com/project/feeleen/sqlobjectsdiff)
+
 
 Usage:
 
