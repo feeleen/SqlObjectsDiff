@@ -24,6 +24,13 @@ namespace SqlServerDiff
 			conn.ServerInstance = ServerName;
 			conn.LoginSecure = false;
 			myServer = new Server(conn);
+
+			ObjectRepository[ObjType.StoredProcedure] = SPText;
+			ObjectRepository[ObjType.Table] = TableText;
+			ObjectRepository[ObjType.TableTrigger] = TriggerText;
+			ObjectRepository[ObjType.View] = ViewText;
+			ObjectRepository[ObjType.UserFunction] = UFText;
+			ObjectRepository[ObjType.UserTableType] = UTText;
 		}
 
 		public Server Server
@@ -85,7 +92,8 @@ namespace SqlServerDiff
 		public Dictionary<string, string> ViewText= new Dictionary<string, string>();
 		public Dictionary<string, string> UFText= new Dictionary<string, string>();
 		public Dictionary<string, string> UTText= new Dictionary<string, string>();
-		
+
+		public Dictionary<string, Dictionary<string, string>> ObjectRepository = new Dictionary<string, Dictionary<string, string>>();
 
 		private string GetSSPIConnectionString(string server, string databaseName, string userName = "", string password = "")
 		{
@@ -272,6 +280,27 @@ namespace SqlServerDiff
 			}
 
 			return null;
+		}
+
+		public string GetObjectSourceText(string objName, string objType)
+		{
+			switch (objType)
+			{
+				case ObjType.StoredProcedure:
+					return GetStoredProcedureText(objName);
+				case ObjType.Table:
+					return GetTableText(objName);
+				case ObjType.TableTrigger:
+					return GetTriggerText(objName);
+				case ObjType.UserFunction:
+					return GetUFText(objName);
+				case ObjType.UserTableType:
+					return GetUTText(objName);
+				case ObjType.View:
+					return GetViewText(objName);
+				default:
+					throw new Exception($"Object type <{objType}> is not supported!");
+			}
 		}
 	}
 

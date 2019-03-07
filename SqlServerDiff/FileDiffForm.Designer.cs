@@ -54,7 +54,7 @@
 			this.Controls.Add(this.DiffCtrl);
 			this.Name = "FileDiffForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Сравнение версий";
+			this.Text = "Diff: Main Server - vs - Test Server";
 			this.Closed += new System.EventHandler(this.FileDiffForm_Closed);
 			this.Shown += new System.EventHandler(this.FileDiffForm_Shown);
 			this.ResumeLayout(false);
