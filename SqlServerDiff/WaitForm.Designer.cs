@@ -30,14 +30,15 @@
 		{
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
+			this.StatusLabel = new System.Windows.Forms.Label();
+			this.LogBox = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// progressBar1
 			// 
 			this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBar1.Location = new System.Drawing.Point(48, 107);
+			this.progressBar1.Location = new System.Drawing.Point(48, 308);
 			this.progressBar1.Name = "progressBar1";
 			this.progressBar1.Size = new System.Drawing.Size(394, 38);
 			this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
@@ -52,20 +53,34 @@
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Processing...";
 			// 
-			// label2
+			// StatusLabel
 			// 
-			this.label2.Location = new System.Drawing.Point(45, 70);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(397, 27);
-			this.label2.TabIndex = 1;
-			this.label2.Text = "-";
+			this.StatusLabel.Location = new System.Drawing.Point(45, 70);
+			this.StatusLabel.Name = "StatusLabel";
+			this.StatusLabel.Size = new System.Drawing.Size(397, 27);
+			this.StatusLabel.TabIndex = 1;
+			this.StatusLabel.Text = "-";
+			// 
+			// LogBox
+			// 
+			this.LogBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.LogBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.LogBox.Location = new System.Drawing.Point(48, 109);
+			this.LogBox.Multiline = true;
+			this.LogBox.Name = "LogBox";
+			this.LogBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.LogBox.Size = new System.Drawing.Size(394, 193);
+			this.LogBox.TabIndex = 2;
 			// 
 			// WaitForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(493, 177);
-			this.Controls.Add(this.label2);
+			this.ClientSize = new System.Drawing.Size(493, 378);
+			this.Controls.Add(this.LogBox);
+			this.Controls.Add(this.StatusLabel);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.progressBar1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -81,6 +96,7 @@
 
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label StatusLabel;
+		private System.Windows.Forms.TextBox LogBox;
 	}
 }

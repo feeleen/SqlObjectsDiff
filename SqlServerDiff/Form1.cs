@@ -24,14 +24,6 @@ namespace SqlServerDiff
 
         SchemaContainer MainSchema = new SchemaContainer(ServerType.Main);
 		SchemaContainer TestSchema = new SchemaContainer(ServerType.Test);
-		
-
-        TreeNode NodeTables = new TreeNode("Tables");
-		TreeNode NodeViews = new TreeNode("Views");
-        TreeNode NodeSP = new TreeNode("Stored Procedures");
-        TreeNode NodeUT = new TreeNode("User Types");
-        TreeNode NodeUF = new TreeNode("User Functions");
-        TreeNode NodeTriggers = new TreeNode("Triggers");
 
 		Dictionary<string, Dictionary<string, string>> ChangedObjectsTest = null;
 
@@ -43,32 +35,15 @@ namespace SqlServerDiff
 			InitializeComponent();
 			CenterToScreen();
 
-			NodeTables.ToolTipText = NodeTables.Text;
-			NodeTables.Tag = ObjType.Table;
-
-			NodeViews.ToolTipText = NodeViews.Text;
-			NodeViews.Tag = ObjType.View;
-
-			NodeSP.ToolTipText = NodeSP.Text;
-			NodeSP.Tag = ObjType.StoredProcedure;
-
-			NodeUT.ToolTipText = NodeUT.Text;
-			NodeUT.Tag = ObjType.UserTableType;
-
-			NodeUF.ToolTipText = NodeUF.Text;
-			NodeUF.Tag = ObjType.UserFunction;
-
-			NodeTriggers.ToolTipText = NodeTriggers.Text;
-			NodeTriggers.Tag = ObjType.TableTrigger;
-
 			treeView1.Nodes.Clear();
-            treeView1.Nodes.Add(NodeTables);
-            treeView1.Nodes.Add(NodeViews);
-            treeView1.Nodes.Add(NodeSP);
-            treeView1.Nodes.Add(NodeUT);
-            treeView1.Nodes.Add(NodeUF);
-            treeView1.Nodes.Add(NodeTriggers);
-
+            foreach (string objType in ObjType.GetAllObjTypes())
+			{
+				TreeNode node = new TreeNode(ObjType.GetDescription(objType));
+				node.ToolTipText = node.Text;
+				node.Tag = objType;
+				treeView1.Nodes.Add(node);
+			}
+			
 			using (PasswordForm frm = new PasswordForm())
 			{
 				frm.StartPosition = FormStartPosition.CenterParent;
@@ -102,10 +77,6 @@ namespace SqlServerDiff
 			TestSchema.InitTriggerList();
 		}
 
-		
-
-
-
 		private void TextArea_KeyPress(object sender, KeyPressEventArgs e)
         {
             
@@ -133,7 +104,8 @@ namespace SqlServerDiff
 		{
 			foreach (string objType in ObjType.GetAllObjTypes())
 			{
-				if (MainSchema.ObjectRepository[objType].ContainsKey(textBox1.Text.Trim()) || TestSchema.ObjectRepository[objType].ContainsKey(textBox1.Text.Trim()))
+				if ((MainSchema.ObjectRepository.ContainsKey(objType) && MainSchema.ObjectRepository[objType].ContainsKey(textBox1.Text.Trim())) 
+					|| (TestSchema.ObjectRepository.ContainsKey(objType) && TestSchema.ObjectRepository[objType].ContainsKey(textBox1.Text.Trim())))
 				{
 					ShowDifferences(MainSchema.GetObjectSourceText(textBox1.Text.Trim(), objType), TestSchema.GetObjectSourceText(textBox1.Text.Trim(), objType), DiffType.Text);
 				}
@@ -163,18 +135,22 @@ namespace SqlServerDiff
 				rootNode.Nodes.Clear();
 			}
 
-			using (WaitForm wf = new WaitForm(LoadObjects))
+			using (WaitForm wf = new WaitForm())
 			{
+				wf.Worker = () => { LoadObjects(wf); };
 				wf.ShowDialog(this);
 			}
         }
 
-		public void LoadObjects()
+
+		public void LoadObjects(WaitForm progress)
 		{
 			if (RawCompareBox.Checked)
 			{
 				AllObjectsTest = TestSchema.GetAllObjects();
 				AllObjectsMain = MainSchema.GetAllObjects();
+
+				progress.Status = $"Found {(AllObjectsTest.Count + AllObjectsTest.Values.Sum(dict => dict.Count)).ToString()} objects..";
 
 				// union all objects from main & test
 				Dictionary<string, Dictionary<string, string>> differentObjects = new Dictionary<string, Dictionary<string, string>>();
@@ -203,13 +179,17 @@ namespace SqlServerDiff
 					}
 				}
 
-				LoadChangedObjects(MainSchema, TestSchema, differentObjects);
+				LoadChangedObjects(MainSchema, TestSchema, differentObjects, progress);
 			}
 			else
 			{
+				progress.Status = $"Looking for changed objects in test db for period of {DaysBox.Value} days..";
 				// track changes only from test!
 				ChangedObjectsTest = TestSchema.GetChangedObjects(Convert.ToInt32(DaysBox.Value));
-				LoadChangedObjects(MainSchema, TestSchema, ChangedObjectsTest);
+
+				progress.Status = $"Found {(ChangedObjectsTest.Count + ChangedObjectsTest.Values.Sum(dict => dict.Count)).ToString()} objects..";
+
+				LoadChangedObjects(MainSchema, TestSchema, ChangedObjectsTest, progress);
 			}
 		}
 
@@ -230,15 +210,16 @@ namespace SqlServerDiff
 			parent.Text = $"{parent.ToolTipText} ({parent.Nodes.Count})";
 		}
 
-        private void LoadChangedObjects(SchemaContainer schema, SchemaContainer schemaTest, Dictionary<string, Dictionary<string, string>> changedObjects)
+        private void LoadChangedObjects(SchemaContainer schema, SchemaContainer schemaTest, Dictionary<string, Dictionary<string, string>> changedObjects, WaitForm progress)
         {
 			foreach (string objType in ObjType.GetAllObjTypes())
 			{
-				LoadChangedObjectsByType(schema, schemaTest, changedObjects, objType);
+				progress.Status = $"Loading {ObjType.GetDescription(objType)}..";
+				LoadChangedObjectsByType(schema, schemaTest, changedObjects, objType, progress);
 			}
 		}
 
-		public List<string> LoadChangedObjectsByType(SchemaContainer schema, SchemaContainer schemaTest, Dictionary<string, Dictionary<string, string>> changedObjects, string objectType)
+		public List<string> LoadChangedObjectsByType(SchemaContainer schema, SchemaContainer schemaTest, Dictionary<string, Dictionary<string, string>> changedObjects, string objectType, WaitForm progress)
 		{
 			List<string> result = new List<string>();
 
@@ -246,9 +227,10 @@ namespace SqlServerDiff
 			{
 				foreach (string objName in changedObjects[objectType].Select(s => s.Key).ToList())
 				{
-					if (!changedObjects[objectType].ContainsKey(objName))
+					if (!changedObjects[objectType].ContainsKey(objName) || !schema.ObjectRepository.ContainsKey(objectType))
 						continue;
 
+					progress.AddLog($"Processing {objectType}: {objName}..");
 					schema.ObjectRepository[objectType][objName] = schema.GetObjectSourceText(objName, objectType);
 					schemaTest.ObjectRepository[objectType][objName] = schemaTest.GetObjectSourceText(objName, objectType);
 
@@ -257,21 +239,11 @@ namespace SqlServerDiff
 						result.Add(objName);
 						AppendChildNode(GetTreeNodeByType(objectType), objName, objectType);
 					}
-
-					// hack for triggers - we need to fill TriggersToTables additionally
-					if (objectType == ObjType.Table)
-					{
-						List<string> triggers = LoadChangedObjectsByType(schema, schemaTest, changedObjects, ObjType.TableTrigger);
-
-						foreach (string trName in triggers)
-						{
-							schemaTest.TriggersToTables[trName] = objName;
-						}
-					}
 				}
 			}
 			return result;
 		}
+		
 
 		private TreeNode GetTreeNodeByType(string nodeType)
 		{

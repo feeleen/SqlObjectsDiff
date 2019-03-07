@@ -17,7 +17,11 @@ namespace SqlServerDiff
 		private ServerType servertype;
 		private ServerConnection conn = new ServerConnection();
 		private Server myServer = null;
-			
+
+		public Dictionary<string, string> TriggersToTables = new Dictionary<string, string>();
+
+		public Dictionary<string, Dictionary<string, string>> ObjectRepository = new Dictionary<string, Dictionary<string, string>>();
+
 		public SchemaContainer(ServerType servertype)
 		{
 			this.servertype = servertype;
@@ -25,12 +29,10 @@ namespace SqlServerDiff
 			conn.LoginSecure = false;
 			myServer = new Server(conn);
 
-			ObjectRepository[ObjType.StoredProcedure] = SPText;
-			ObjectRepository[ObjType.Table] = TableText;
-			ObjectRepository[ObjType.TableTrigger] = TriggerText;
-			ObjectRepository[ObjType.View] = ViewText;
-			ObjectRepository[ObjType.UserFunction] = UFText;
-			ObjectRepository[ObjType.UserTableType] = UTText;
+			foreach (string objType in ObjType.GetAllObjTypes())
+			{
+				ObjectRepository[objType] = new Dictionary<string, string>();
+			}
 		}
 
 		public Server Server
@@ -84,17 +86,6 @@ namespace SqlServerDiff
 			get { return ConfigurationManager.AppSettings[ServerTypeName + "Database"].Replace(" ", ""); }
 		}
 		
-		
-		public Dictionary<string, string> TriggersToTables = new Dictionary<string, string>();
-		public Dictionary<string, string> TableText = new Dictionary<string, string>();
-		public Dictionary<string, string> SPText= new Dictionary<string, string>();
-		public Dictionary<string, string> TriggerText= new Dictionary<string, string>();
-		public Dictionary<string, string> ViewText= new Dictionary<string, string>();
-		public Dictionary<string, string> UFText= new Dictionary<string, string>();
-		public Dictionary<string, string> UTText= new Dictionary<string, string>();
-
-		public Dictionary<string, Dictionary<string, string>> ObjectRepository = new Dictionary<string, Dictionary<string, string>>();
-
 		private string GetSSPIConnectionString(string server, string databaseName, string userName = "", string password = "")
 		{
 			var builder = new SqlConnectionStringBuilder
@@ -184,7 +175,7 @@ namespace SqlServerDiff
 			return objects;
 		}
 
-		public string GetViewText(string name)
+		private string GetViewText(string name)
 		{
 			if (Database.Views[name] == null)
 				return null;
@@ -192,7 +183,7 @@ namespace SqlServerDiff
 			return Database.Views[name].TextHeader + Environment.NewLine + Database.Views[name].TextBody;
 		}
 
-		public string GetStoredProcedureText(string name)
+		private string GetStoredProcedureText(string name)
 		{
 			if (Database.StoredProcedures[name] == null)
 				return null;
@@ -200,7 +191,7 @@ namespace SqlServerDiff
 			return Database.StoredProcedures[name].TextHeader + Environment.NewLine + Database.StoredProcedures[name].TextBody;
 		}
 
-		public string GetUTText(string name)
+		private string GetUTText(string name)
 		{
 			if (Database.UserDefinedTypes[name] == null)
 				return null;
@@ -215,7 +206,7 @@ namespace SqlServerDiff
 			return result;
 		}
 
-		public string GetUFText(string name)
+		private string GetUFText(string name)
 		{
 			if (Database.UserDefinedFunctions[name] == null)
 				return null;
@@ -223,13 +214,20 @@ namespace SqlServerDiff
 			return Database.UserDefinedFunctions[name].TextHeader + Environment.NewLine + Database.UserDefinedFunctions[name].TextBody;
 		}
 
-		public string GetTableText(string name)
+		private string GetTableText(string name)
 		{
 			if (Database.Tables[name] == null)
 				return null;
 
+			ScriptingOptions so = new ScriptingOptions();
+			so.DriAllConstraints = true;
+			so.DriForeignKeys = true;
+			so.DriIndexes = true;
+			so.NoCollation = true;
+
 			StringBuilder builder = new StringBuilder();
-			foreach (string s in Database.Tables[name].Script())
+			var script = Database.Tables[name].Script(so);
+			foreach (string s in script)
 			{
 				builder.AppendLine(s);
 			}
@@ -238,8 +236,23 @@ namespace SqlServerDiff
 			return result;
 		}
 
+		private string GetUserDefinedAggregatesText(string name)
+		{
+			if (Database.UserDefinedAggregates[name] == null)
+				return null;
 
-		public string GetUTTableText(string name)
+			StringBuilder builder = new StringBuilder();
+			foreach (string s in Database.UserDefinedAggregates[name].Script())
+			{
+				builder.AppendLine(s);
+			}
+			string result = builder.ToString();
+
+			return result;
+		}
+		
+		
+		private string GetUTTableText(string name)
 		{
 			if (name.LastIndexOf("_") == -1)
 				return null;
@@ -260,7 +273,7 @@ namespace SqlServerDiff
 			return result;
 		}
 
-		public string GetTriggerText(string name)
+		private string GetTriggerText(string name)
 		{
 			string tableName = "";
 
@@ -298,6 +311,28 @@ namespace SqlServerDiff
 					return GetUTText(objName);
 				case ObjType.View:
 					return GetViewText(objName);
+				case ObjType.AggregateFunction:
+					return GetUserDefinedAggregatesText(objName);
+
+				//case ObjType.TableValuedFunction:
+				//	return GetTableValuedFunctionText(objName);
+				//case ObjType.ExtendedStoredProcedure:
+				//	return GetExtendedStoredProcedureText(objName);
+				//case ObjType.SqlInlineTableValuedFunction:
+				//	return GetSqlInlineTableValuedFunctionText(objName);
+				//case ObjType.PrimaryKeyConstraint:
+				//	return GetPrimaryKeyConstraintText(objName);
+				//case ObjType.CheckConstraint:
+				//	return GetCheckConstraintText(objName);
+				//case ObjType.DefaultConstraint:
+				//	return GetDefaultConstraintText(objName);
+				//case ObjType.ForeignKeyConstraint:
+				//	return GetForeignKeyConstraintText(objName);
+				//case ObjType.ClrScalarFunction:
+				//	return GetClrScalarFunctionText(objName);
+				//case ObjType.ClrStoredProcedure:
+				//	return GetClrStoredProcedureText(objName);
+
 				default:
 					throw new Exception($"Object type <{objType}> is not supported!");
 			}
