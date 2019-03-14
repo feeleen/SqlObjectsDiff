@@ -13,13 +13,15 @@ namespace SqlServerDiff
 {
     public partial class PasswordForm : Form
     {
-        public PasswordForm()
+        public PasswordForm(string mainDescr, string testDescr)
         {
             InitializeComponent();
 
 			LoginBox.Text = ConfigurationManager.AppSettings["MainServerLogin"];
 			TestLoginBox.Text = ConfigurationManager.AppSettings["TestServerLogin"];
 
+			groupBox1.Text = mainDescr;
+			groupBox2.Text = testDescr;
 		}
 
         private void button1_Click(object sender, EventArgs e)

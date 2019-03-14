@@ -30,10 +30,21 @@ namespace SqlServerDiff
 		Dictionary<string, Dictionary<string, string>> AllObjectsTest = null;
 		Dictionary<string, Dictionary<string, string>> AllObjectsMain = null;
 		
+		private string ConfigurationName
+		{
+			get
+			{
+				return $"{MainSchema.ServerName}\\{MainSchema.DBName} vs {TestSchema.ServerName}\\{TestSchema.DBName}";
+			}
+		}
+
+
 		public Form1()
 		{
 			InitializeComponent();
 			CenterToScreen();
+
+			this.Text = $"SqlServerDiff: {ConfigurationName}";
 
 			treeView1.Nodes.Clear();
             foreach (string objType in ObjType.GetAllObjTypes())
@@ -44,7 +55,7 @@ namespace SqlServerDiff
 				treeView1.Nodes.Add(node);
 			}
 			
-			using (PasswordForm frm = new PasswordForm())
+			using (PasswordForm frm = new PasswordForm($"{MainSchema.ServerName}\\{MainSchema.DBName}", $"{TestSchema.ServerName}\\{TestSchema.DBName}"))
 			{
 				frm.StartPosition = FormStartPosition.CenterParent;
 
@@ -91,7 +102,7 @@ namespace SqlServerDiff
 			{	
 				Form frmNew = new FileDiffForm();
 				frmNew.Owner  = this;
-                frmNew.Text = "Diff: Main Server - vs - Test Server";
+                frmNew.Text = $"Diff: {ConfigurationName}";
 				frmNew.StartPosition = FormStartPosition.CenterParent;
 
 				IDifferenceForm frmDiff = (IDifferenceForm)frmNew;
