@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PasswordForm));
 			this.LoginBox = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
@@ -196,9 +197,9 @@
 			this.label3.AutoSize = true;
 			this.label3.Location = new System.Drawing.Point(12, 148);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(288, 13);
+			this.label3.Size = new System.Drawing.Size(254, 13);
 			this.label3.TabIndex = 8;
-			this.label3.Text = "*Use App.config to specify server names && database names";
+			this.label3.Text = "*Use App.config to specify server && database names";
 			// 
 			// splitContainer1
 			// 
@@ -227,6 +228,7 @@
 			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.button1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "PasswordForm";
 			this.Text = "Login";
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PasswordForm_KeyDown);

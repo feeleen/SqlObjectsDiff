@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,6 +14,8 @@ namespace SqlServerDiff
 	public partial class WaitForm : Form
 	{
 		public Action Worker { get; set; }
+		public CancellationToken CancellationToken { get; set; }
+		private CancellationTokenSource cancelSource = new CancellationTokenSource();
 
 		public WaitForm()
 		{
@@ -21,16 +24,23 @@ namespace SqlServerDiff
 
 		public void SetStatus(string status)
 		{
-			if (InvokeRequired)
+			try
 			{
-				Invoke((MethodInvoker)delegate {
-					SetStatus(status);
-				});
-				return;
-			}
+				if (InvokeRequired)
+				{
+					Invoke((MethodInvoker)delegate
+					{
+						SetStatus(status);
+					});
+					return;
+				}
 
-			StatusLabel.Text = status;
-			
+				if (this == null)
+					return;
+
+				StatusLabel.Text = status;
+			}
+			catch { }
 		}
 
 		public string Status
@@ -47,19 +57,23 @@ namespace SqlServerDiff
 
 		public void AddLog(string message)
 		{
-			if (InvokeRequired)
+			try
 			{
-				Invoke((MethodInvoker)delegate {
-					AddLog(message);
-				});
-				return;
+				if (InvokeRequired)
+				{
+					Invoke((MethodInvoker)delegate {
+						AddLog(message);
+					});
+					return;
+				}
+			
+				if (LogBox.TextLength > 30000)
+					LogBox.Text = "";
+
+				LogBox.AppendText(message + Environment.NewLine);
+				LogBox.ScrollToCaret();
 			}
-
-			if (LogBox.TextLength > 30000)
-				LogBox.Text = "";
-
-			LogBox.AppendText(message+ Environment.NewLine);
-			LogBox.ScrollToCaret();
+			catch { }
 		}
 
 		public string Log
@@ -78,7 +92,14 @@ namespace SqlServerDiff
 		{
 			base.OnLoad(e);
 
+			CancellationToken = cancelSource.Token;
+
 			Task.Factory.StartNew(Worker).ContinueWith(t => { Close(); }, TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		private void WaitForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			cancelSource.Cancel();
 		}
 	}
 }

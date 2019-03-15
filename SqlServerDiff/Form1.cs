@@ -16,6 +16,7 @@ using Feeleen.Diff;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace SqlServerDiff
 {
@@ -166,8 +167,13 @@ namespace SqlServerDiff
 				// union all objects from main & test
 				Dictionary<string, Dictionary<string, string>> differentObjects = new Dictionary<string, Dictionary<string, string>>();
 
-				foreach (string oType in AllObjectsMain.Keys)
+				foreach (string oType in AllObjectsMain.Keys.OrderBy(s => s).ToList())
 				{
+					if (progress.CancellationToken.IsCancellationRequested)
+					{
+						return;
+					}
+
 					if (!differentObjects.ContainsKey(oType))
 						differentObjects[oType] = new Dictionary<string, string>();
 
@@ -178,8 +184,13 @@ namespace SqlServerDiff
 					}
 				}
 
-				foreach (string oType in AllObjectsTest.Keys)
+				foreach (string oType in AllObjectsTest.Keys.OrderBy(s => s).ToList())
 				{
+					if (progress.CancellationToken.IsCancellationRequested)
+					{
+						return;
+					}
+
 					if (!differentObjects.ContainsKey(oType))
 						differentObjects[oType] = new Dictionary<string, string>();
 
@@ -236,10 +247,19 @@ namespace SqlServerDiff
 
 			if (changedObjects.ContainsKey(objectType))
 			{
-				foreach (string objName in changedObjects[objectType].Select(s => s.Key).ToList())
+				int totalCount = changedObjects[objectType].Count;
+				int counter = 1;
+				foreach (string objName in changedObjects[objectType].Select(s => s.Key).OrderBy(s => s).ToList())
 				{
+					if (progress.CancellationToken.IsCancellationRequested)
+					{
+						return result;
+					}
+
 					if (!changedObjects[objectType].ContainsKey(objName) || !schema.ObjectRepository.ContainsKey(objectType))
 						continue;
+
+					progress.Status = $"Loading {counter++} of {totalCount} {ObjType.GetDescription(objectType)}s..";
 
 					progress.AddLog($"Processing {objectType}: {objName}..");
 					schema.ObjectRepository[objectType][objName] = schema.GetObjectSourceText(objName, objectType);

@@ -297,45 +297,53 @@ namespace SqlServerDiff
 
 		public string GetObjectSourceText(string objName, string objType)
 		{
-			switch (objType)
+			try
 			{
-				case ObjType.StoredProcedure:
-					return GetStoredProcedureText(objName);
-				case ObjType.Table:
-					return GetTableText(objName);
-				case ObjType.TableTrigger:
-					return GetTriggerText(objName);
-				case ObjType.UserFunction:
-					return GetUFText(objName);
-				case ObjType.UserTableType:
-					return GetUTText(objName);
-				case ObjType.View:
-					return GetViewText(objName);
-				case ObjType.AggregateFunction:
-					return GetUserDefinedAggregatesText(objName);
+				switch (objType)
+				{
+					case ObjType.StoredProcedure:
+						return GetStoredProcedureText(objName);
+					case ObjType.Table:
+						return GetTableText(objName);
+					case ObjType.TableTrigger:
+						return GetTriggerText(objName);
+					case ObjType.UserFunction:
+						return GetUFText(objName);
+					case ObjType.UserTableType:
+						return GetUTText(objName);
+					case ObjType.View:
+						return GetViewText(objName);
+					case ObjType.AggregateFunction:
+						return GetUserDefinedAggregatesText(objName);
 
-				//case ObjType.TableValuedFunction:
-				//	return GetTableValuedFunctionText(objName);
-				//case ObjType.ExtendedStoredProcedure:
-				//	return GetExtendedStoredProcedureText(objName);
-				//case ObjType.SqlInlineTableValuedFunction:
-				//	return GetSqlInlineTableValuedFunctionText(objName);
-				//case ObjType.PrimaryKeyConstraint:
-				//	return GetPrimaryKeyConstraintText(objName);
-				//case ObjType.CheckConstraint:
-				//	return GetCheckConstraintText(objName);
-				//case ObjType.DefaultConstraint:
-				//	return GetDefaultConstraintText(objName);
-				//case ObjType.ForeignKeyConstraint:
-				//	return GetForeignKeyConstraintText(objName);
-				//case ObjType.ClrScalarFunction:
-				//	return GetClrScalarFunctionText(objName);
-				//case ObjType.ClrStoredProcedure:
-				//	return GetClrStoredProcedureText(objName);
+					//case ObjType.TableValuedFunction:
+					//	return GetTableValuedFunctionText(objName);
+					//case ObjType.ExtendedStoredProcedure:
+					//	return GetExtendedStoredProcedureText(objName);
+					//case ObjType.SqlInlineTableValuedFunction:
+					//	return GetSqlInlineTableValuedFunctionText(objName);
+					//case ObjType.PrimaryKeyConstraint:
+					//	return GetPrimaryKeyConstraintText(objName);
+					//case ObjType.CheckConstraint:
+					//	return GetCheckConstraintText(objName);
+					//case ObjType.DefaultConstraint:
+					//	return GetDefaultConstraintText(objName);
+					//case ObjType.ForeignKeyConstraint:
+					//	return GetForeignKeyConstraintText(objName);
+					//case ObjType.ClrScalarFunction:
+					//	return GetClrScalarFunctionText(objName);
+					//case ObjType.ClrStoredProcedure:
+					//	return GetClrStoredProcedureText(objName);
 
-				default:
-					throw new Exception($"Object type <{objType}> is not supported!");
+					default:
+						throw new Exception($"Object type <{objType}> is not supported!");
+				}
 			}
+			catch
+			{
+			}
+
+			return String.Empty;
 		}
 	}
 

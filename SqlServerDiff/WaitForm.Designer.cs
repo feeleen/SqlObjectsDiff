@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WaitForm));
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.label1 = new System.Windows.Forms.Label();
 			this.StatusLabel = new System.Windows.Forms.Label();
@@ -38,16 +39,17 @@
 			// 
 			this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBar1.Location = new System.Drawing.Point(48, 308);
+			this.progressBar1.Location = new System.Drawing.Point(12, 344);
+			this.progressBar1.MarqueeAnimationSpeed = 50;
 			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(394, 38);
+			this.progressBar1.Size = new System.Drawing.Size(469, 16);
 			this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
 			this.progressBar1.TabIndex = 0;
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(45, 35);
+			this.label1.Location = new System.Drawing.Point(15, 18);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(68, 13);
 			this.label1.TabIndex = 1;
@@ -55,11 +57,10 @@
 			// 
 			// StatusLabel
 			// 
-			this.StatusLabel.Location = new System.Drawing.Point(45, 70);
+			this.StatusLabel.Location = new System.Drawing.Point(15, 43);
 			this.StatusLabel.Name = "StatusLabel";
-			this.StatusLabel.Size = new System.Drawing.Size(397, 27);
+			this.StatusLabel.Size = new System.Drawing.Size(466, 25);
 			this.StatusLabel.TabIndex = 1;
-			this.StatusLabel.Text = "-";
 			// 
 			// LogBox
 			// 
@@ -67,11 +68,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.LogBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.LogBox.Location = new System.Drawing.Point(48, 109);
+			this.LogBox.Location = new System.Drawing.Point(12, 91);
 			this.LogBox.Multiline = true;
 			this.LogBox.Name = "LogBox";
 			this.LogBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.LogBox.Size = new System.Drawing.Size(394, 193);
+			this.LogBox.Size = new System.Drawing.Size(469, 247);
 			this.LogBox.TabIndex = 2;
 			// 
 			// WaitForm
@@ -83,10 +84,12 @@
 			this.Controls.Add(this.StatusLabel);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.progressBar1);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "WaitForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "WaitForm";
+			this.Text = "Processing...";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WaitForm_FormClosing);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

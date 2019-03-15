@@ -30,12 +30,12 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-			System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Tables");
-			System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Triggers");
-			System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Stored Procedures");
-			System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Functions");
-			System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("User Types");
-			System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Views");
+			System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Tables");
+			System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Triggers");
+			System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Stored Procedures");
+			System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Functions");
+			System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("User Types");
+			System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Views");
 			this.ViewDiffBtn = new System.Windows.Forms.Button();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -145,25 +145,25 @@
 			this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.treeView1.Location = new System.Drawing.Point(0, 0);
 			this.treeView1.Name = "treeView1";
-			treeNode19.Name = "NodeTables";
-			treeNode19.Text = "Tables";
-			treeNode20.Name = "NodeTriggers";
-			treeNode20.Text = "Triggers";
-			treeNode21.Name = "NodeSP";
-			treeNode21.Text = "Stored Procedures";
-			treeNode22.Name = "NodeFn";
-			treeNode22.Text = "Functions";
-			treeNode23.Name = "NodeUserTypes";
-			treeNode23.Text = "User Types";
-			treeNode24.Name = "NodeViews";
-			treeNode24.Text = "Views";
+			treeNode1.Name = "NodeTables";
+			treeNode1.Text = "Tables";
+			treeNode2.Name = "NodeTriggers";
+			treeNode2.Text = "Triggers";
+			treeNode3.Name = "NodeSP";
+			treeNode3.Text = "Stored Procedures";
+			treeNode4.Name = "NodeFn";
+			treeNode4.Text = "Functions";
+			treeNode5.Name = "NodeUserTypes";
+			treeNode5.Text = "User Types";
+			treeNode6.Name = "NodeViews";
+			treeNode6.Text = "Views";
 			this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode19,
-            treeNode20,
-            treeNode21,
-            treeNode22,
-            treeNode23,
-            treeNode24});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4,
+            treeNode5,
+            treeNode6});
 			this.treeView1.Size = new System.Drawing.Size(340, 384);
 			this.treeView1.TabIndex = 6;
 			this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
@@ -267,6 +267,7 @@
 			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.ViewDiffBtn);
 			this.Controls.Add(this.statusStrip1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "Form1";
 			this.Text = "SqlServerDiff - Compare objects between Main and Test Sql Servers";
 			((System.ComponentModel.ISupportInitialize)(this.fctb)).EndInit();
