@@ -126,6 +126,7 @@ namespace SqlServerDiff
                     type_desc
                 from sys.all_objects
                 where modify_date > dateadd(d, -{days}, getdate())
+					and is_ms_shipped = 0
                 order by modify_date desc";
 
 			if (days < 0)
@@ -136,6 +137,7 @@ namespace SqlServerDiff
                     type,
                     type_desc
                 from sys.all_objects
+				where is_ms_shipped = 0
                 order by modify_date desc";
 			}
 
